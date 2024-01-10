@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>utils.transformBinnedDF2CommunitiesAll &mdash; Documentation of package catencfamily 0.0.96 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=19f00094" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js?v=2f74cb28"></script>
+        <script src="../_static/doctools.js?v=888ff710"></script>
+        <script src="../_static/sphinx_highlight.js?v=4825356b"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="utils.remConstColumns" href="utils.remConstColumns.html" />
+    <link rel="prev" title="utils.transformBinnedDF2Communities" href="utils.transformBinnedDF2Communities.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            Documentation of package catencfamily
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../modules.html">CatEncFamily Module</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../modules.html#module-utils">Utils Module</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../modules.html#utils.addStatsCols"><code class="docutils literal notranslate"><span class="pre">addStatsCols()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules.html#utils.binFeatures"><code class="docutils literal notranslate"><span class="pre">binFeatures()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules.html#utils.bootstrapSample"><code class="docutils literal notranslate"><span class="pre">bootstrapSample()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules.html#utils.calMIScores"><code class="docutils literal notranslate"><span class="pre">calMIScores()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules.html#utils.communityVisualization"><code class="docutils literal notranslate"><span class="pre">communityVisualization()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules.html#utils.featureEngKmeans"><code class="docutils literal notranslate"><span class="pre">featureEngKmeans()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules.html#utils.featureImptByCentFeatCounts"><code class="docutils literal notranslate"><span class="pre">featureImptByCentFeatCounts()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules.html#utils.featureImptByScore"><code class="docutils literal notranslate"><span class="pre">featureImptByScore()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules.html#utils.generateClassificationData"><code class="docutils literal notranslate"><span class="pre">generateClassificationData()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules.html#utils.pcaAndConcat"><code class="docutils literal notranslate"><span class="pre">pcaAndConcat()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules.html#utils.plotBipartiteGraph"><code class="docutils literal notranslate"><span class="pre">plotBipartiteGraph()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules.html#utils.plotMulResults"><code class="docutils literal notranslate"><span class="pre">plotMulResults()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules.html#utils.plotResults"><code class="docutils literal notranslate"><span class="pre">plotResults()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules.html#utils.plotSeries"><code class="docutils literal notranslate"><span class="pre">plotSeries()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules.html#utils.plotUnipartiteGraph"><code class="docutils literal notranslate"><span class="pre">plotUnipartiteGraph()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules.html#utils.randomSample"><code class="docutils literal notranslate"><span class="pre">randomSample()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules.html#utils.remConstColumns"><code class="docutils literal notranslate"><span class="pre">remConstColumns()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules.html#utils.remCorrFeatures"><code class="docutils literal notranslate"><span class="pre">remCorrFeatures()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules.html#utils.removeLowVarCols"><code class="docutils literal notranslate"><span class="pre">removeLowVarCols()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules.html#utils.restorePythonObject"><code class="docutils literal notranslate"><span class="pre">restorePythonObject()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules.html#utils.savePythonObject"><code class="docutils literal notranslate"><span class="pre">savePythonObject()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules.html#utils.transformBinnedDF2Communities"><code class="docutils literal notranslate"><span class="pre">transformBinnedDF2Communities()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules.html#utils.transformBinnedDF2CommunitiesAll"><code class="docutils literal notranslate"><span class="pre">transformBinnedDF2CommunitiesAll()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules.html#utils.transformFeatures"><code class="docutils literal notranslate"><span class="pre">transformFeatures()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules.html#utils.transformToCatFeatures"><code class="docutils literal notranslate"><span class="pre">transformToCatFeatures()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules.html#utils.visualize_importance"><code class="docutils literal notranslate"><span class="pre">visualize_importance()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules.html#utils.xgImptFeatures"><code class="docutils literal notranslate"><span class="pre">xgImptFeatures()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="utils.xgImptFeatures.html">utils.xgImptFeatures</a></li>
+<li class="toctree-l2"><a class="reference internal" href="utils.visualize_importance.html">utils.visualize_importance</a></li>
+<li class="toctree-l2"><a class="reference internal" href="utils.remCorrFeatures.html">utils.remCorrFeatures</a></li>
+<li class="toctree-l2"><a class="reference internal" href="utils.addStatsCols.html">utils.addStatsCols</a></li>
+<li class="toctree-l2"><a class="reference internal" href="utils.transformToCatFeatures.html">utils.transformToCatFeatures</a></li>
+<li class="toctree-l2"><a class="reference internal" href="utils.generateClassificationData.html">utils.generateClassificationData</a></li>
+<li class="toctree-l2"><a class="reference internal" href="utils.transformFeatures.html">utils.transformFeatures</a></li>
+<li class="toctree-l2"><a class="reference internal" href="utils.removeLowVarCols.html">utils.removeLowVarCols</a></li>
+<li class="toctree-l2"><a class="reference internal" href="utils.binFeatures.html">utils.binFeatures</a></li>
+<li class="toctree-l2"><a class="reference internal" href="utils.randomSample.html">utils.randomSample</a></li>
+<li class="toctree-l2"><a class="reference internal" href="utils.plotResults.html">utils.plotResults</a></li>
+<li class="toctree-l2"><a class="reference internal" href="utils.plotMulResults.html">utils.plotMulResults</a></li>
+<li class="toctree-l2"><a class="reference internal" href="utils.bootstrapSample.html">utils.bootstrapSample</a></li>
+<li class="toctree-l2"><a class="reference internal" href="utils.savePythonObject.html">utils.savePythonObject</a></li>
+<li class="toctree-l2"><a class="reference internal" href="utils.restorePythonObject.html">utils.restorePythonObject</a></li>
+<li class="toctree-l2"><a class="reference internal" href="utils.pcaAndConcat.html">utils.pcaAndConcat</a></li>
+<li class="toctree-l2"><a class="reference internal" href="utils.calMIScores.html">utils.calMIScores</a></li>
+<li class="toctree-l2"><a class="reference internal" href="utils.plotSeries.html">utils.plotSeries</a></li>
+<li class="toctree-l2"><a class="reference internal" href="utils.featureImptByCentFeatCounts.html">utils.featureImptByCentFeatCounts</a></li>
+<li class="toctree-l2"><a class="reference internal" href="utils.featureImptByScore.html">utils.featureImptByScore</a></li>
+<li class="toctree-l2"><a class="reference internal" href="utils.plotBipartiteGraph.html">utils.plotBipartiteGraph</a></li>
+<li class="toctree-l2"><a class="reference internal" href="utils.plotUnipartiteGraph.html">utils.plotUnipartiteGraph</a></li>
+<li class="toctree-l2"><a class="reference internal" href="utils.communityVisualization.html">utils.communityVisualization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="utils.transformBinnedDF2Communities.html">utils.transformBinnedDF2Communities</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">utils.transformBinnedDF2CommunitiesAll</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#utils.transformBinnedDF2CommunitiesAll"><code class="docutils literal notranslate"><span class="pre">transformBinnedDF2CommunitiesAll()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="utils.remConstColumns.html">utils.remConstColumns</a></li>
+<li class="toctree-l2"><a class="reference internal" href="utils.featureEngKmeans.html">utils.featureEngKmeans</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Documentation of package catencfamily</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../modules.html">CatEncFamily Module</a></li>
+      <li class="breadcrumb-item active">utils.transformBinnedDF2CommunitiesAll</li>
+      <li class="wy-breadcrumbs-aside">
+              <a href="https://github.com/harnalashok/CatEncodersFamily/blob/main_autosummary/utils.transformBinnedDF2CommunitiesAll.rst" class="fa fa-github"> Edit on GitHub</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="utils-transformbinneddf2communitiesall">
+<h1>utils.transformBinnedDF2CommunitiesAll<a class="headerlink" href="#utils-transformbinneddf2communitiesall" title="Permalink to this heading"></a></h1>
+<dl class="py function">
+<dt class="sig sig-object py" id="utils.transformBinnedDF2CommunitiesAll">
+<span class="sig-prename descclassname"><span class="pre">utils.</span></span><span class="sig-name descname"><span class="pre">transformBinnedDF2CommunitiesAll</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pathToGraphFolder</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">train_binned</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">algo</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/utils.html#transformBinnedDF2CommunitiesAll"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#utils.transformBinnedDF2CommunitiesAll" title="Permalink to this definition"></a></dt>
+<dd><section id="desc">
+<h2>Desc<a class="headerlink" href="#desc" title="Permalink to this heading"></a></h2>
+<p>Search out all graph files and Replace every column in the binned Dataframe 
+as per network community
+Example binned/discrete dataframe:</p>
+<blockquote>
+<div><p>‘a’     ‘b
+–      —
+434     709
+435     789
+23      710
+78      756</p>
+</div></blockquote>
+<p>Replace col ‘a’ as per communities discovered in network ‘a_projected_b.gml’:
+434 &amp; 435 belong to one community and 23 &amp; 78 to other.</p>
+<blockquote>
+<div><p>‘a’     ‘b’
+—     —</p>
+<blockquote>
+<div><p>0      709
+0      789
+1      710
+1      756</p>
+</div></blockquote>
+</div></blockquote>
+<p>Similarly, replace col ‘b’ as per communities in ‘b_projected_a.gml’:</p>
+<blockquote>
+<div><p>‘a’     ‘b’
+—     —</p>
+<blockquote>
+<div><p>0      1
+0      0
+1      0
+1      1</p>
+</div></blockquote>
+</div></blockquote>
+</section>
+<section id="parameters">
+<h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this heading"></a></h2>
+<p>pathToGraphFolder: str: Folder that has graph files
+train_binned: DataFrame with binned/discrete columns
+algo: function object: networkx algorithm to be used to</p>
+<blockquote>
+<div><p>discover communities.
+Example: nx.community.greedy_modularity_communities</p>
+</div></blockquote>
+</section>
+<section id="returns">
+<h2>Returns<a class="headerlink" href="#returns" title="Permalink to this heading"></a></h2>
+<dl class="simple">
+<dt>map_list: list of dictionaries. Each dictionary maps</dt><dd><p>levels in a column to a community</p>
+</dd>
+<dt>df: DataFrame: Transformed train_binned DataFrame.</dt><dd><p>If train_binned had columns other than columnNames,
+df would not contain those columns</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="utils.transformBinnedDF2Communities.html" class="btn btn-neutral float-left" title="utils.transformBinnedDF2Communities" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="utils.remConstColumns.html" class="btn btn-neutral float-right" title="utils.remConstColumns" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Prof. Ashok Harnal.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,1518 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>utils &mdash; Documentation of package catencfamily 0.0.96 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=19f00094" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js?v=2f74cb28"></script>
+        <script src="../_static/doctools.js?v=888ff710"></script>
+        <script src="../_static/sphinx_highlight.js?v=4825356b"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            Documentation of package catencfamily
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../modules.html">CatEncFamily Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../modules.html#module-utils">Utils Module</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Documentation of package catencfamily</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Module code</a></li>
+      <li class="breadcrumb-item active">utils</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for utils</h1><div class="highlight"><pre>
+<span></span><span class="c1"># 24th Dec, 2023</span>
+
+<span class="c1">## Utility functions</span>
+
+
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">scipy.stats</span> <span class="kn">import</span> <span class="n">kurtosis</span>
+<span class="kn">from</span> <span class="nn">sklearn.decomposition</span> <span class="kn">import</span> <span class="n">PCA</span>
+<span class="kn">from</span> <span class="nn">sklearn.preprocessing</span> <span class="kn">import</span> <span class="n">StandardScaler</span>
+<span class="kn">from</span> <span class="nn">sklearn.datasets</span> <span class="kn">import</span> <span class="n">make_classification</span>
+<span class="kn">from</span> <span class="nn">sklearn.cluster</span> <span class="kn">import</span> <span class="n">KMeans</span>
+<span class="kn">from</span> <span class="nn">sklearn.mixture</span> <span class="kn">import</span> <span class="n">GaussianMixture</span>
+<span class="kn">from</span> <span class="nn">sklearn.feature_selection</span> <span class="kn">import</span>  <span class="n">mutual_info_classif</span>
+<span class="kn">import</span> <span class="nn">networkx</span> <span class="k">as</span> <span class="nn">nx</span>
+<span class="c1"># added 27th July, 2023</span>
+<span class="kn">from</span> <span class="nn">cdlib</span> <span class="kn">import</span> <span class="n">algorithms</span>
+<span class="kn">import</span> <span class="nn">itertools</span>
+<span class="kn">import</span> <span class="nn">pickle</span>
+<span class="kn">import</span> <span class="nn">pathlib</span>
+<span class="kn">import</span> <span class="nn">string</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">import</span> <span class="nn">seaborn</span> <span class="k">as</span> <span class="nn">sns</span>
+<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">import</span> <span class="nn">gc</span>
+
+
+
+
+<div class="viewcode-block" id="xgImptFeatures"><a class="viewcode-back" href="../modules.html#utils.xgImptFeatures">[docs]</a><span class="k">def</span> <span class="nf">xgImptFeatures</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">df_columns</span><span class="p">,</span> <span class="n">filename</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">master</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Given an xgboost classifier model &amp; data col</span>
+<span class="sd">    names, the function returns two lists of cols,</span>
+<span class="sd">    one of impt features and the other of </span>
+<span class="sd">    unimportant features. Feature importances</span>
+<span class="sd">    areby &#39;gain&#39; as against default &#39;weight&#39;</span>
+<span class="sd">    in plot_importance() function of xgboost.</span>
+<span class="sd">   </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    model: xgboostclassifier model trained on dataframe df</span>
+<span class="sd">    df_columns: Column names of df. Sequence</span>
+<span class="sd">                is important: df_columns = list(df.columns)</span>
+<span class="sd">    master: Folder where impt feature sequence is saved</span>
+<span class="sd">            File name: fe_1.txt          </span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    fe_1 : List of columns having features imp &gt; 0 in descending order</span>
+<span class="sd">    fe_0 : List of columns having features imp of 0.0</span>
+<span class="sd">    fe   : Pandas Series with indicies as col names against imp scores </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Sorted index are in descending order of impt</span>
+    <span class="n">sorted_idx</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">feature_importances_</span><span class="o">.</span><span class="n">argsort</span><span class="p">()[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">fe</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span>
+                       <span class="n">model</span><span class="o">.</span><span class="n">feature_importances_</span><span class="p">[</span><span class="n">sorted_idx</span><span class="p">],</span>
+                       <span class="n">index</span> <span class="o">=</span> <span class="n">df_columns</span><span class="p">[</span><span class="n">sorted_idx</span><span class="p">],</span>
+                       <span class="n">columns</span> <span class="o">=</span><span class="p">[</span><span class="s1">&#39;imp&#39;</span><span class="p">]</span>
+                     <span class="p">)</span>
+    <span class="c1"># Columns with zero feature impt</span>
+    <span class="n">fe_0</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">fe</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">fe</span><span class="p">[</span><span class="s1">&#39;imp&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="mf">0.0</span><span class="p">,</span> <span class="p">:]</span><span class="o">.</span><span class="n">index</span><span class="p">)</span>
+    <span class="c1"># Columns greater than than zero feature impt</span>
+    <span class="c1"># fe_1 is in descending order</span>
+    <span class="n">fe_1</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">fe</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">fe</span><span class="p">[</span><span class="s1">&#39;imp&#39;</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mf">0.0</span><span class="p">,</span> <span class="p">:]</span><span class="o">.</span><span class="n">index</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Order of feature importance is by &#39;gain&#39;&quot;</span><span class="p">)</span>
+    <span class="c1"># Save to file</span>
+    <span class="k">if</span> <span class="n">filename</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="c1"># Also save these features</span>
+        <span class="n">filename</span> <span class="o">=</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">(</span><span class="n">master</span><span class="p">)</span> <span class="o">/</span> <span class="n">filename</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span><span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">tfile</span><span class="p">:</span>
+            <span class="n">tfile</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">fe_1</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">fe_1</span><span class="p">,</span> <span class="n">fe_0</span><span class="p">,</span> <span class="n">fe</span></div>
+   
+
+<span class="c1"># Ref: https://www.kaggle.com/code/tetsutani/ps3e16-eda-ensemble-ml-pipeline</span>
+<span class="c1"># For multiple models</span>
+<div class="viewcode-block" id="visualize_importance"><a class="viewcode-back" href="../modules.html#utils.visualize_importance">[docs]</a><span class="k">def</span> <span class="nf">visualize_importance</span><span class="p">(</span><span class="n">models</span><span class="p">,</span> <span class="n">feature_cols</span><span class="p">,</span> <span class="n">title</span><span class="p">,</span> <span class="n">top</span><span class="o">=</span><span class="mi">9</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Not tested</span>
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    models : TYPE</span>
+<span class="sd">        DESCRIPTION.</span>
+<span class="sd">    feature_cols : TYPE</span>
+<span class="sd">        DESCRIPTION.</span>
+<span class="sd">    title : TYPE</span>
+<span class="sd">        DESCRIPTION.</span>
+<span class="sd">    top : TYPE, optional</span>
+<span class="sd">        DESCRIPTION. The default is 9.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    None.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">importances</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">feature_importance</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">model</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">models</span><span class="p">):</span>
+        <span class="n">_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">()</span>
+        <span class="n">_df</span><span class="p">[</span><span class="s2">&quot;importance&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">feature_importances_</span>
+        <span class="n">_df</span><span class="p">[</span><span class="s2">&quot;feature&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">feature_cols</span><span class="p">)</span>
+        <span class="n">_df</span><span class="p">[</span><span class="s2">&quot;fold&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">i</span>
+        <span class="n">_df</span> <span class="o">=</span> <span class="n">_df</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="s1">&#39;importance&#39;</span><span class="p">,</span> <span class="n">ascending</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="n">_df</span> <span class="o">=</span> <span class="n">_df</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="n">top</span><span class="p">)</span>
+        <span class="n">feature_importance</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">feature_importance</span><span class="p">,</span> <span class="n">_df</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">ignore_index</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        
+    <span class="n">feature_importance</span> <span class="o">=</span> <span class="n">feature_importance</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="s1">&#39;importance&#39;</span><span class="p">,</span> <span class="n">ascending</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="c1"># display(feature_importance.groupby([&quot;feature&quot;]).mean().reset_index().drop(&#39;fold&#39;, axis=1))</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span>
+    <span class="n">sns</span><span class="o">.</span><span class="n">barplot</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="s1">&#39;importance&#39;</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="s1">&#39;feature&#39;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">feature_importance</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;skyblue&#39;</span><span class="p">,</span> <span class="n">errorbar</span><span class="o">=</span><span class="s1">&#39;sd&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Importance&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">14</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;Feature&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">14</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">title</span><span class="si">}</span><span class="s1"> Feature Importance&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">18</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="s1">&#39;x&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span></div>
+    
+
+
+<span class="c1"># https://stackoverflow.com/a/44674459</span>
+<span class="c1"># ToDO REMOVE zero variance threshold   &lt;=== *****</span>
+<div class="viewcode-block" id="remCorrFeatures"><a class="viewcode-back" href="../modules.html#utils.remCorrFeatures">[docs]</a><span class="k">def</span> <span class="nf">remCorrFeatures</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">threshold</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Desc</span>
+<span class="sd">    ----</span>
+<span class="sd">    Function drops features which have pearson&#39;s corr</span>
+<span class="sd">    value more than or equal to the threshold. Absolute</span>
+<span class="sd">    value of theshold is taken.</span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    data : DataFrame from whom highly corr</span>
+<span class="sd">           features are to be removed</span>
+<span class="sd">    threshold : Corr threshold beyond which a </span>
+<span class="sd">                feature will be dropped</span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    un_corr_data : DataFrame with highly corr</span>
+<span class="sd">                   features dropped</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">un_corr_data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="n">col_corr</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span> <span class="c1"># Set of all the names of deleted columns</span>
+    <span class="c1"># Consider both +ve and -ve correlations</span>
+    <span class="n">corr_matrix</span> <span class="o">=</span> <span class="n">un_corr_data</span><span class="o">.</span><span class="n">corr</span><span class="p">()</span><span class="o">.</span><span class="n">abs</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">corr_matrix</span><span class="o">.</span><span class="n">columns</span><span class="p">)):</span>
+        <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">i</span><span class="p">):</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">corr_matrix</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="n">threshold</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">corr_matrix</span><span class="o">.</span><span class="n">columns</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">col_corr</span><span class="p">):</span>
+                <span class="n">colname</span> <span class="o">=</span> <span class="n">corr_matrix</span><span class="o">.</span><span class="n">columns</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="c1"># getting the name of column</span>
+                <span class="n">col_corr</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">colname</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">colname</span> <span class="ow">in</span> <span class="n">un_corr_data</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
+                    <span class="k">del</span> <span class="n">un_corr_data</span><span class="p">[</span><span class="n">colname</span><span class="p">]</span> <span class="c1"># deleting the column from the un_corr_data</span>
+
+    <span class="k">return</span> <span class="n">un_corr_data</span></div>
+
+
+<div class="viewcode-block" id="addStatsCols"><a class="viewcode-back" href="../modules.html#utils.addStatsCols">[docs]</a><span class="k">def</span> <span class="nf">addStatsCols</span><span class="p">(</span><span class="n">df</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Given a dataframe with all numeric features,</span>
+<span class="sd">    this function creates more numeric features,</span>
+<span class="sd">    row-wise, as: std, mean, median,min, max</span>
+<span class="sd">    and kurtosis. Returns modified dataFrame.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">df</span><span class="p">[</span><span class="s1">&#39;std&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">df</span><span class="p">,</span><span class="n">axis</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">df</span><span class="p">[</span><span class="s1">&#39;mean&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">axis</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">df</span><span class="p">[</span><span class="s1">&#39;median&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">median</span><span class="p">(</span><span class="n">df</span><span class="p">,</span><span class="n">axis</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">df</span><span class="p">[</span><span class="s1">&#39;min&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">df</span><span class="p">,</span><span class="n">axis</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">df</span><span class="p">[</span><span class="s1">&#39;max&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">df</span><span class="p">,</span><span class="n">axis</span> <span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">df</span><span class="p">[</span><span class="s1">&#39;kurtosis&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">kurtosis</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="n">axis</span> <span class="o">=</span><span class="mi">1</span> <span class="p">)</span>
+    <span class="k">return</span> <span class="n">df</span></div>
+
+
+
+<span class="c1"># Generate data using sklearn&#39;s make_classification</span>
+<div class="viewcode-block" id="transformToCatFeatures"><a class="viewcode-back" href="../modules.html#utils.transformToCatFeatures">[docs]</a><span class="k">def</span> <span class="nf">transformToCatFeatures</span><span class="p">(</span><span class="n">X</span><span class="p">,</span><span class="n">y</span><span class="p">,</span> <span class="n">test_size</span> <span class="o">=</span> <span class="mf">0.25</span><span class="p">,</span> <span class="n">bins</span> <span class="o">=</span> <span class="mi">20</span><span class="p">,</span> <span class="n">genColName</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Calls: transformFeatures()</span>
+<span class="sd">    Called by: main()</span>
+<span class="sd">    </span>
+<span class="sd">    Desc</span>
+<span class="sd">    ----</span>
+<span class="sd">    The function discretises X assuming all features in X</span>
+<span class="sd">    have continuous values. Discretisation of all features </span>
+<span class="sd">    is perfomed as per number of &#39;bins&#39; specified. </span>
+<span class="sd">    We then have two datasets: original and discretised.</span>
+<span class="sd">    Both original and discretised versions continue to have </span>
+<span class="sd">    the same row-orderings. And hence returned sample of continuous</span>
+<span class="sd">    data corresponds to returned sample of discrete data.</span>
+<span class="sd">    </span>
+<span class="sd">    The functon assumes that X,y have been generated by one of</span>
+<span class="sd">    sklearn&#39;s make datasets algorithm and hence do not have</span>
+<span class="sd">    header. The function assigns a header.</span>
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    </span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    orig_train : pandas DataFrame</span>
+<span class="sd">        Has continuous features</span>
+<span class="sd">    orig_test : pandas DataFrame</span>
+<span class="sd">        HAs continuous features</span>
+<span class="sd">    train_train : pandas DataFrame</span>
+<span class="sd">        Has discrete features</span>
+<span class="sd">    train_test : pandas DataFrame</span>
+<span class="sd">        Has discrete features</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">X_data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+    <span class="n">y_data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
+    <span class="n">colnames</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span>
+    
+    <span class="n">orig_train</span><span class="p">,</span> <span class="n">orig_test</span><span class="p">,</span><span class="n">train_binned</span><span class="p">,</span><span class="n">test_binned</span> <span class="o">=</span> <span class="n">transformFeatures</span><span class="p">(</span><span class="n">X_data</span><span class="p">,</span><span class="n">y_data</span><span class="p">,</span> <span class="n">test_size</span><span class="p">,</span> <span class="n">bins</span><span class="p">,</span> <span class="n">colnames</span><span class="p">,</span> <span class="n">genColName</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">orig_train</span><span class="p">,</span> <span class="n">orig_test</span><span class="p">,</span> <span class="n">train_binned</span><span class="p">,</span> <span class="n">test_binned</span>    </div>
+
+
+
+
+
+
+
+<span class="c1"># Generate data using sklearn&#39;s make_classification</span>
+<div class="viewcode-block" id="generateClassificationData"><a class="viewcode-back" href="../modules.html#utils.generateClassificationData">[docs]</a><span class="k">def</span> <span class="nf">generateClassificationData</span><span class="p">(</span><span class="n">n_samples</span> <span class="o">=</span> <span class="mi">10000</span><span class="p">,</span> <span class="n">n_features</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span> <span class="n">n_informative</span> <span class="o">=</span> <span class="mi">5</span><span class="p">,</span>
+                               <span class="n">n_classes</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span><span class="n">n_clusters_per_class</span> <span class="o">=</span> <span class="mi">3</span><span class="p">,</span> <span class="n">class_sep</span> <span class="o">=</span> <span class="mf">0.5</span><span class="p">,</span>
+                               <span class="n">weights</span><span class="o">=</span> <span class="p">[</span><span class="mf">0.5</span><span class="p">,</span><span class="mf">0.5</span><span class="p">],</span> <span class="n">test_size</span> <span class="o">=</span> <span class="mf">0.25</span><span class="p">,</span> <span class="n">bins</span> <span class="o">=</span> <span class="mi">20</span><span class="p">,</span> 
+                               <span class="n">flip_y</span> <span class="o">=</span> <span class="mf">0.01</span><span class="p">,</span> <span class="n">hypercube</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">seed</span> <span class="o">=</span> <span class="mi">42</span><span class="p">,</span><span class="n">genColName</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    The function generates data for classification task using </span>
+<span class="sd">    sklearn&#39;s make_classification(). All features generted by </span>
+<span class="sd">    make_classification() have continuous values. After data </span>
+<span class="sd">    is generated, we discretise all features as per number of</span>
+<span class="sd">    &#39;bins&#39; specified. We then have two datasets: original and </span>
+<span class="sd">    discretised. Both the datasets are shuffled and split into</span>
+<span class="sd">    train and test data. </span>
+<span class="sd">    Note that both the datasets continue to have the same </span>
+<span class="sd">    row-orderings. And hence returned sample of continuous</span>
+<span class="sd">    data corresponds to returned sample of discrete data.</span>
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    For description of parameters, please see sklearn&#39;s documentation</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    orig_train : pandas DataFrame</span>
+<span class="sd">        Has continuous features</span>
+<span class="sd">    orig_test : pandas DataFrame</span>
+<span class="sd">        HAs continuous features</span>
+<span class="sd">    train_train : pandas DataFrame</span>
+<span class="sd">        Has discrete features</span>
+<span class="sd">    train_test : pandas DataFrame</span>
+<span class="sd">        Has discrete features</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">X</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">make_classification</span><span class="p">(</span>
+                                <span class="n">n_samples</span><span class="o">=</span><span class="n">n_samples</span><span class="p">,</span>  <span class="c1"># row number</span>
+                                <span class="n">n_features</span><span class="o">=</span><span class="n">n_features</span><span class="p">,</span> <span class="c1"># feature numbers</span>
+                                <span class="n">n_informative</span><span class="o">=</span> <span class="n">n_informative</span><span class="p">,</span> <span class="c1"># The number of informative features</span>
+                                <span class="n">n_redundant</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="c1"># The number of redundant features</span>
+                                <span class="n">n_repeated</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="c1"># The number of duplicated features</span>
+                                <span class="n">n_classes</span> <span class="o">=</span> <span class="n">n_classes</span><span class="p">,</span> <span class="c1"># The number of classes </span>
+                                <span class="n">n_clusters_per_class</span><span class="o">=</span> <span class="n">n_clusters_per_class</span><span class="p">,</span><span class="c1">#The number of clusters per class</span>
+                                <span class="n">random_state</span> <span class="o">=</span> <span class="mi">42</span> <span class="p">,</span><span class="c1"># random seed</span>
+                                <span class="n">class_sep</span> <span class="o">=</span> <span class="n">class_sep</span><span class="p">,</span>
+                                <span class="n">flip_y</span> <span class="o">=</span> <span class="n">flip_y</span>
+                             <span class="p">)</span>
+    
+    <span class="n">X_data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+    <span class="n">y_data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
+    
+    <span class="n">orig_train</span><span class="p">,</span> <span class="n">orig_test</span><span class="p">,</span><span class="n">train_binned</span><span class="p">,</span><span class="n">test_binned</span> <span class="o">=</span> <span class="n">transformFeatures</span><span class="p">(</span><span class="n">X_data</span><span class="p">,</span><span class="n">y_data</span><span class="p">,</span> <span class="n">test_size</span><span class="p">,</span> <span class="n">bins</span><span class="p">,</span> <span class="n">genColName</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">orig_train</span><span class="p">,</span> <span class="n">orig_test</span><span class="p">,</span> <span class="n">train_binned</span><span class="p">,</span> <span class="n">test_binned</span>    </div>
+
+
+
+ 
+<div class="viewcode-block" id="transformFeatures"><a class="viewcode-back" href="../modules.html#utils.transformFeatures">[docs]</a><span class="k">def</span> <span class="nf">transformFeatures</span><span class="p">(</span><span class="n">X_data</span><span class="p">,</span><span class="n">y_data</span><span class="p">,</span> <span class="n">test_size</span> <span class="o">=</span> <span class="mf">0.25</span><span class="p">,</span> <span class="n">bins</span><span class="o">=</span> <span class="mi">20</span><span class="p">,</span>  <span class="n">colnames</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">genColName</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span>
+<span class="w">    </span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Called by: transformToCatFeatures() , generateClassificationData</span>
+<span class="sd">    Calls: None</span>
+<span class="sd">    </span>
+<span class="sd">    Desc</span>
+<span class="sd">    ----</span>
+<span class="sd">    Given a DataFrame X_data having only continuous features, </span>
+<span class="sd">    and y_data the target, the function bins each feature. </span>
+<span class="sd">    The resulting dataframe as also the original is partitioned</span>
+<span class="sd">    into train/test as per specified test_size.</span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    X_data : A pandas DataFrame (data features)</span>
+<span class="sd">    y_data : A pandas series (data target)</span>
+<span class="sd">    test_size : How data is to be partitioned into train/test</span>
+<span class="sd">               The default is 0.25.</span>
+<span class="sd">    bins : Number of bins into which each column of X</span>
+<span class="sd">           will be discretised. The default is 20.</span>
+<span class="sd">    genColName : Should new column names be generated?</span>
+<span class="sd">                 The default is True.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    orig_train : train sample taken from X </span>
+<span class="sd">    orig_test : test sample taken from X</span>
+<span class="sd">    train_binned : train sample but binned </span>
+<span class="sd">                   taken from X</span>
+<span class="sd">    test_binned : test sample but binned</span>
+<span class="sd">                  taken from X</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">genColName</span><span class="p">:</span>
+        <span class="n">colnames</span> <span class="o">=</span> <span class="n">colnames</span>
+    
+    
+    <span class="n">orig</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">X_data</span><span class="p">)</span>
+    <span class="n">train</span> <span class="o">=</span> <span class="n">orig</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="c1"># Generate integer levels</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">train</span><span class="o">.</span><span class="n">columns</span><span class="p">):</span>
+        <span class="n">k</span> <span class="o">=</span> <span class="p">(</span> <span class="p">(</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="mi">4</span><span class="p">)</span>    <span class="c1"># generate an integer as a unique prefix for this iteration</span>
+        <span class="n">g</span> <span class="o">=</span> <span class="p">[]</span>              <span class="c1"># Will contain levels (names)</span>
+        <span class="c1"># Generate as many level-names as number of bins for jth column</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">bins</span><span class="p">):</span>   <span class="c1"># For each one of bins (levels)</span>
+            <span class="n">g</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">k</span><span class="p">)</span> <span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">))</span>   <span class="c1"># g conatins a list of names for levels</span>
+        
+        <span class="c1"># for &#39;j&#39; column, cut it into bins and assign each bin a label </span>
+        <span class="c1"># No of bins and o of labels must be same.</span>
+        <span class="n">train</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">cut</span><span class="p">(</span><span class="n">train</span><span class="p">[</span><span class="n">j</span><span class="p">],</span> <span class="n">bins</span><span class="p">,</span> <span class="n">labels</span> <span class="o">=</span> <span class="n">g</span><span class="p">)</span>  
+    
+    <span class="k">if</span> <span class="n">genColName</span><span class="p">:</span>
+        <span class="c1"># Also generate new column names</span>
+        <span class="n">alphabet</span> <span class="o">=</span> <span class="n">string</span><span class="o">.</span><span class="n">ascii_lowercase</span>    
+        <span class="n">colnames</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;f&quot;</span> <span class="o">+</span> <span class="n">alphabet</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">train</span><span class="o">.</span><span class="n">columns</span><span class="p">))</span> <span class="p">]</span>
+        
+    <span class="n">train</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="n">colnames</span>
+    <span class="n">orig</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="n">colnames</span>
+    <span class="n">train</span><span class="p">[</span><span class="s1">&#39;target&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">y_data</span>
+    <span class="n">orig</span><span class="p">[</span><span class="s1">&#39;target&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">y_data</span>
+    
+    <span class="c1"># Shuffle data</span>
+    <span class="n">h</span> <span class="o">=</span> <span class="n">train</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">values</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">shuffle</span><span class="p">(</span><span class="n">h</span><span class="p">)</span>
+    <span class="n">train</span> <span class="o">=</span> <span class="n">train</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">h</span><span class="p">]</span>
+    <span class="n">orig</span> <span class="o">=</span> <span class="n">orig</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">h</span><span class="p">]</span>
+    
+    <span class="c1"># Pick top 1-test_size rows</span>
+    <span class="n">train_binned</span> <span class="o">=</span> <span class="n">train</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span> <span class="nb">int</span><span class="p">(</span><span class="n">train</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">test_size</span><span class="p">)</span> <span class="p">:,</span> <span class="p">:</span> <span class="p">]</span>
+    <span class="n">test_binned</span>  <span class="o">=</span> <span class="n">train</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span> <span class="p">:</span><span class="nb">int</span><span class="p">(</span><span class="n">train</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">test_size</span><span class="p">)</span>  <span class="p">,</span> <span class="p">:</span> <span class="p">]</span>
+    
+    <span class="c1"># Pick bottom test_size rows</span>
+    <span class="n">orig_train</span> <span class="o">=</span> <span class="n">orig</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span> <span class="nb">int</span><span class="p">(</span><span class="n">train</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">test_size</span><span class="p">)</span> <span class="p">:,</span> <span class="p">:</span> <span class="p">]</span>
+    <span class="n">orig_test</span> <span class="o">=</span> <span class="n">orig</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span> <span class="p">:</span><span class="nb">int</span><span class="p">(</span><span class="n">train</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">test_size</span><span class="p">)</span>  <span class="p">,</span> <span class="p">:</span> <span class="p">]</span>
+    
+    <span class="k">return</span> <span class="n">orig_train</span><span class="p">,</span> <span class="n">orig_test</span><span class="p">,</span> <span class="n">train_binned</span><span class="p">,</span> <span class="n">test_binned</span>    </div>
+        
+
+
+<span class="c1"># Added on 2nd April, 2023</span>
+ <span class="c1"># Refer: https://stackoverflow.com/a/31799225</span>
+<div class="viewcode-block" id="removeLowVarCols"><a class="viewcode-back" href="../modules.html#utils.removeLowVarCols">[docs]</a><span class="k">def</span> <span class="nf">removeLowVarCols</span><span class="p">(</span><span class="n">df</span><span class="p">,</span><span class="n">threshold</span> <span class="o">=</span> <span class="mf">0.05</span><span class="p">,</span> <span class="n">pca</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Remove columns from pandas DataFrame having variance below threshold</span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    df: Pandas DataFrame</span>
+<span class="sd">    threshold: Float value</span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    DataFrame with columns having low threshold dropped</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">pca</span><span class="p">)</span> <span class="p">:</span>
+        <span class="n">pc</span> <span class="o">=</span> <span class="n">PCA</span><span class="p">(</span><span class="n">n_components</span> <span class="o">=</span> <span class="mf">0.95</span><span class="p">)</span>
+        <span class="n">out_pc</span> <span class="o">=</span> <span class="n">pc</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+        <span class="n">c_names</span> <span class="o">=</span> <span class="p">[</span> <span class="s2">&quot;c&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">out_pc</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">])]</span>
+        <span class="n">out_pc</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">out_pc</span><span class="p">,</span> <span class="n">columns</span> <span class="o">=</span> <span class="n">c_names</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+         <span class="k">if</span> <span class="p">(</span><span class="n">threshold</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">):</span>
+             <span class="n">out_pc</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">std</span><span class="p">()[</span><span class="n">df</span><span class="o">.</span><span class="n">std</span><span class="p">()</span> <span class="o">&lt;</span> <span class="n">threshold</span><span class="p">]</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">out_pc</span></div>
+
+
+
+<span class="c1"># Added on 11th April</span>
+<div class="viewcode-block" id="binFeatures"><a class="viewcode-back" href="../modules.html#utils.binFeatures">[docs]</a><span class="k">def</span> <span class="nf">binFeatures</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">bins</span><span class="o">=</span> <span class="mi">20</span><span class="p">,</span> <span class="p">):</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">):</span>
+        <span class="n">k</span> <span class="o">=</span> <span class="p">(</span> <span class="p">(</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="mi">4</span><span class="p">)</span>    <span class="c1"># generate a unique prefix for every iteration</span>
+        <span class="n">g</span> <span class="o">=</span> <span class="p">[]</span>              <span class="c1"># Will contain label names</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">bins</span><span class="p">):</span>   <span class="c1"># For each one of bins (levels)</span>
+            <span class="n">g</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">k</span><span class="p">)</span> <span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">))</span>   <span class="c1"># g conatins a list of names for levels</span>
+            
+        <span class="n">df</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">cut</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="n">j</span><span class="p">],</span> <span class="n">bins</span><span class="p">,</span> <span class="n">labels</span> <span class="o">=</span> <span class="n">g</span><span class="p">)</span>  
+    <span class="k">return</span> <span class="n">df</span>    </div>
+    
+
+
+<span class="c1"># rng is randomstate</span>
+<span class="c1"># rng = np.random.RandomState(123)</span>
+<div class="viewcode-block" id="randomSample"><a class="viewcode-back" href="../modules.html#utils.randomSample">[docs]</a><span class="k">def</span> <span class="nf">randomSample</span><span class="p">(</span><span class="n">ar</span><span class="p">,</span> <span class="n">perstratasize</span><span class="p">,</span> <span class="n">rng</span><span class="p">):</span>
+    <span class="n">fact</span> <span class="o">=</span> <span class="n">ar</span>
+    <span class="n">idx_arr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">(</span>
+         <span class="p">(</span>
+            <span class="n">rng</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">argwhere</span><span class="p">(</span><span class="n">fact</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">flatten</span><span class="p">(),</span> <span class="n">perstratasize</span><span class="p">,</span> <span class="n">replace</span><span class="o">=</span><span class="kc">False</span><span class="p">),</span>
+            <span class="n">rng</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">argwhere</span><span class="p">(</span><span class="n">fact</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">flatten</span><span class="p">(),</span> <span class="n">perstratasize</span><span class="p">,</span> <span class="n">replace</span><span class="o">=</span><span class="kc">False</span><span class="p">),</span>
+            <span class="n">rng</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">argwhere</span><span class="p">(</span><span class="n">fact</span> <span class="o">==</span> <span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">flatten</span><span class="p">(),</span> <span class="n">perstratasize</span><span class="p">,</span> <span class="n">replace</span><span class="o">=</span><span class="kc">False</span><span class="p">),</span>
+            <span class="n">rng</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">argwhere</span><span class="p">(</span><span class="n">fact</span> <span class="o">==</span> <span class="mi">3</span><span class="p">)</span><span class="o">.</span><span class="n">flatten</span><span class="p">(),</span> <span class="n">perstratasize</span><span class="p">,</span> <span class="n">replace</span><span class="o">=</span><span class="kc">False</span><span class="p">),</span>
+            <span class="n">rng</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">argwhere</span><span class="p">(</span><span class="n">fact</span> <span class="o">==</span> <span class="mi">4</span><span class="p">)</span><span class="o">.</span><span class="n">flatten</span><span class="p">(),</span> <span class="n">perstratasize</span><span class="p">,</span> <span class="n">replace</span><span class="o">=</span><span class="kc">False</span><span class="p">),</span>
+            <span class="n">rng</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">argwhere</span><span class="p">(</span><span class="n">fact</span> <span class="o">==</span> <span class="mi">5</span><span class="p">)</span><span class="o">.</span><span class="n">flatten</span><span class="p">(),</span> <span class="n">perstratasize</span><span class="p">,</span> <span class="n">replace</span><span class="o">=</span><span class="kc">False</span><span class="p">),</span>
+            <span class="n">rng</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">argwhere</span><span class="p">(</span><span class="n">fact</span> <span class="o">==</span> <span class="mi">6</span><span class="p">)</span><span class="o">.</span><span class="n">flatten</span><span class="p">(),</span> <span class="n">perstratasize</span><span class="p">,</span> <span class="n">replace</span><span class="o">=</span><span class="kc">False</span><span class="p">),</span>
+         <span class="p">)</span>
+      <span class="p">)</span>
+    <span class="n">tar</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">ar</span><span class="p">))</span>
+    <span class="n">tr_ar</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">tar</span><span class="p">)</span><span class="o">.</span><span class="n">difference</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">idx_arr</span><span class="p">)))</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">tr_ar</span><span class="p">),</span><span class="n">idx_arr</span>    <span class="c1"># train/test arrays</span></div>
+
+
+
+
+
+
+<span class="c1"># StackOverflow: https://stackoverflow.com/a/24953575</span>
+<div class="viewcode-block" id="plotResults"><a class="viewcode-back" href="../modules.html#utils.plotResults">[docs]</a><span class="k">def</span> <span class="nf">plotResults</span><span class="p">(</span><span class="n">results</span><span class="p">,</span> <span class="n">metric</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Desc</span>
+<span class="sd">    ----</span>
+<span class="sd">    </span>
+<span class="sd">    Plots learning curve after xgboost modeling</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    results : xgboost results object</span>
+<span class="sd">    metric : Metric of interest</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    None.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="c1">## Plotting results</span>
+    <span class="n">epochs</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">results</span><span class="p">[</span><span class="s2">&quot;validation_0&quot;</span><span class="p">][</span><span class="n">metric</span><span class="p">])</span>
+    <span class="n">x_axis</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">epochs</span><span class="p">)</span>
+    <span class="c1"># plot log loss</span>
+    <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span><span class="mi">12</span><span class="p">))</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x_axis</span><span class="p">,</span> <span class="n">results</span><span class="p">[</span><span class="s2">&quot;validation_0&quot;</span><span class="p">][</span><span class="n">metric</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Train&quot;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x_axis</span><span class="p">,</span> <span class="n">results</span><span class="p">[</span><span class="s2">&quot;validation_1&quot;</span><span class="p">][</span><span class="n">metric</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Test&quot;</span><span class="p">)</span>
+    <span class="c1"># Set major axis ticks for x and y</span>
+    <span class="n">major_x_ticks</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">500</span><span class="p">,</span> <span class="mi">25</span><span class="p">)</span>
+    <span class="n">major_y_ticks</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mf">0.9</span><span class="p">,</span> <span class="mf">1.01</span><span class="p">,</span> <span class="mf">0.005</span><span class="p">)</span>
+    
+    <span class="c1">#grid_points = [0.89,0.90,0.91,0.92,0.93,0.94,0.95, 0.955, 0.96,0.97,0.98,0.99,1.0]</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">yaxis</span><span class="o">.</span><span class="n">set_ticks</span><span class="p">(</span><span class="n">major_y_ticks</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">xaxis</span><span class="o">.</span><span class="n">set_ticks</span><span class="p">(</span><span class="n">major_x_ticks</span><span class="p">)</span>
+    
+    <span class="n">ax</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="n">alpha</span> <span class="o">=</span> <span class="mf">0.5</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="n">metric</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;No of iterations&quot;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;Plot of &quot;</span><span class="o">+</span> <span class="n">metric</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span></div>
+
+
+
+<span class="c1"># Plot results of two modeling on the same plot</span>
+<div class="viewcode-block" id="plotMulResults"><a class="viewcode-back" href="../modules.html#utils.plotMulResults">[docs]</a><span class="k">def</span> <span class="nf">plotMulResults</span><span class="p">(</span><span class="n">results1</span><span class="p">,</span> <span class="n">results2</span><span class="p">,</span> <span class="n">metric</span><span class="p">,</span> <span class="n">lt_iterations</span> <span class="o">=</span> <span class="mi">500</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Desc</span>
+<span class="sd">    -----</span>
+<span class="sd">    </span>
+<span class="sd">    Plots learning curves from two different xgboost modeling results</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    results1 : xgboost results object from Ist modeling</span>
+<span class="sd">    results2 : xgboost results object from IInd modeling</span>
+<span class="sd">    metric : Metric being evaluated</span>
+<span class="sd">    lt_iterations : X-axis iterations limit. The default is 500.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    None.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1">## Plotting results</span>
+    <span class="n">epochs</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">results1</span><span class="p">[</span><span class="s2">&quot;validation_0&quot;</span><span class="p">][</span><span class="n">metric</span><span class="p">][:</span><span class="n">lt_iterations</span><span class="p">])</span>
+    <span class="n">x_axis</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">epochs</span><span class="p">)</span>
+    <span class="c1"># plot log loss</span>
+    <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span><span class="mi">12</span><span class="p">))</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x_axis</span><span class="p">,</span> <span class="n">results1</span><span class="p">[</span><span class="s2">&quot;validation_0&quot;</span><span class="p">][</span><span class="n">metric</span><span class="p">][:</span><span class="n">lt_iterations</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Train1&quot;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x_axis</span><span class="p">,</span> <span class="n">results1</span><span class="p">[</span><span class="s2">&quot;validation_1&quot;</span><span class="p">][</span><span class="n">metric</span><span class="p">][:</span><span class="n">lt_iterations</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Test1&quot;</span><span class="p">)</span>
+
+    <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x_axis</span><span class="p">,</span> <span class="n">results2</span><span class="p">[</span><span class="s2">&quot;validation_0&quot;</span><span class="p">][</span><span class="n">metric</span><span class="p">][:</span><span class="n">lt_iterations</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Train2&quot;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x_axis</span><span class="p">,</span> <span class="n">results2</span><span class="p">[</span><span class="s2">&quot;validation_1&quot;</span><span class="p">][</span><span class="n">metric</span><span class="p">][:</span><span class="n">lt_iterations</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Test3&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Set major axis ticks for x and y</span>
+    <span class="n">major_x_ticks</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">lt_iterations</span><span class="p">,</span> <span class="mi">25</span><span class="p">)</span>
+    <span class="n">major_y_ticks</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mf">0.9</span><span class="p">,</span> <span class="mf">1.01</span><span class="p">,</span> <span class="mf">0.005</span><span class="p">)</span>
+    
+    <span class="n">grid_points</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.89</span><span class="p">,</span><span class="mf">0.90</span><span class="p">,</span><span class="mf">0.91</span><span class="p">,</span><span class="mf">0.92</span><span class="p">,</span><span class="mf">0.93</span><span class="p">,</span><span class="mf">0.94</span><span class="p">,</span><span class="mf">0.95</span><span class="p">,</span> <span class="mf">0.955</span><span class="p">,</span> <span class="mf">0.96</span><span class="p">,</span><span class="mf">0.97</span><span class="p">,</span><span class="mf">0.98</span><span class="p">,</span><span class="mf">0.99</span><span class="p">,</span><span class="mf">1.0</span><span class="p">]</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">yaxis</span><span class="o">.</span><span class="n">set_ticks</span><span class="p">(</span><span class="n">major_y_ticks</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">xaxis</span><span class="o">.</span><span class="n">set_ticks</span><span class="p">(</span><span class="n">major_x_ticks</span><span class="p">)</span>
+    
+    <span class="n">ax</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="n">alpha</span> <span class="o">=</span> <span class="mf">0.5</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="n">metric</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;No of iterations&quot;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Plot of </span><span class="si">{</span><span class="n">metric</span><span class="si">}</span><span class="s2"> for </span><span class="si">{</span><span class="n">lt_iterations</span><span class="si">}</span><span class="s2"> iterations&quot;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span></div>
+    
+    
+<div class="viewcode-block" id="bootstrapSample"><a class="viewcode-back" href="../modules.html#utils.bootstrapSample">[docs]</a><span class="k">def</span> <span class="nf">bootstrapSample</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>    <span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Desc</span>
+<span class="sd">    -----</span>
+<span class="sd">    Return bootstrap samples of</span>
+<span class="sd">    df, pandas dataframe.</span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    df : Pandas DataFrame</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    A bootstrap sample of the dataframe</span>
+<span class="sd">    </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">k</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+    <span class="n">rows</span><span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">size</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">k</span><span class="p">),</span> <span class="n">replace</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">rows</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">())</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()</span></div>
+
+
+
+<span class="c1"># Ref: https://stackoverflow.com/a/4529901/3282777</span>
+<div class="viewcode-block" id="savePythonObject"><a class="viewcode-back" href="../modules.html#utils.savePythonObject">[docs]</a><span class="k">def</span> <span class="nf">savePythonObject</span><span class="p">(</span><span class="n">pythonObject</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">filePath</span> <span class="o">=</span> <span class="kc">None</span> <span class="p">):</span>
+<span class="w">    </span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Desc</span>
+<span class="sd">    ----</span>
+<span class="sd">    Saves any python object to disk</span>
+<span class="sd">    File is saved to filePath. If</span>
+<span class="sd">    filePath does not exist, it is</span>
+<span class="sd">    created.</span>
+<span class="sd">    Restore the pythonObject</span>
+<span class="sd">    using restorePythonObject()</span>
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    pythonObject: Obj to be saved</span>
+<span class="sd">    filename : str Name of pickle file</span>
+<span class="sd">    filePath: str, NAme of folder</span>
+<span class="sd">    </span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    None.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="c1"># Current dir is the default filePath</span>
+    <span class="k">if</span> <span class="n">filePath</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">filePath</span> <span class="o">=</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="o">.</span><span class="n">cwd</span><span class="p">()</span>
+        <span class="n">path</span> <span class="o">=</span> <span class="n">filePath</span> <span class="o">/</span> <span class="n">filename</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">path</span> <span class="o">=</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">(</span><span class="n">filePath</span><span class="p">)</span> <span class="o">/</span> <span class="n">filename</span>
+        
+    <span class="c1"># Check if specified folder exixts:</span>
+    <span class="c1"># IF not create one:</span>
+    <span class="n">p</span> <span class="o">=</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">(</span><span class="n">filePath</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">p</span><span class="p">):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Folder &#39;</span><span class="si">{</span><span class="n">filePath</span><span class="si">}</span><span class="s2">&#39; does not exist&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Being created..&quot;</span><span class="p">)</span>
+        <span class="n">p</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>    
+    
+    <span class="c1"># Now dump the python object    </span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s1">&#39;wb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">outp</span><span class="p">:</span>
+        <span class="n">pickle</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">pythonObject</span><span class="p">,</span> <span class="n">outp</span><span class="p">,</span> <span class="n">pickle</span><span class="o">.</span><span class="n">HIGHEST_PROTOCOL</span><span class="p">)</span>
+        
+    <span class="c1"># Finally print your message    </span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Object saved to:&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">path</span><span class="p">))</span>    </div>
+
+     
+     
+
+ <span class="c1"># It restores an earlier saved python object</span>
+<div class="viewcode-block" id="restorePythonObject"><a class="viewcode-back" href="../modules.html#utils.restorePythonObject">[docs]</a><span class="k">def</span> <span class="nf">restorePythonObject</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">filePath</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<span class="w">     </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">     Called by: None</span>
+<span class="sd">     Calls: None</span>
+<span class="sd">     Restores an earlier saved python object</span>
+<span class="sd">     in pickle format by savePythonObject()</span>
+<span class="sd">     Parameters</span>
+<span class="sd">     ----------</span>
+<span class="sd">     filename : Pickle file having python-object</span>
+<span class="sd">     filePath : Folder where filename is placed</span>
+<span class="sd">                Default is modelsPath</span>
+
+<span class="sd">     Returns</span>
+<span class="sd">     -------</span>
+<span class="sd">     Python-object</span>
+
+<span class="sd">     &quot;&quot;&quot;</span>
+     <span class="k">if</span> <span class="n">filePath</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">filePath</span> <span class="o">=</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="o">.</span><span class="n">cwd</span><span class="p">()</span>
+        <span class="n">path</span> <span class="o">=</span> <span class="n">filePath</span> <span class="o">/</span> <span class="n">filename</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Looking for &#39;</span><span class="si">{</span><span class="n">filename</span><span class="si">}</span><span class="s2">&#39; in folder: </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">filePath</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span> <span class="p">)</span>
+     <span class="k">else</span><span class="p">:</span>
+        <span class="n">path</span> <span class="o">=</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">(</span><span class="n">filePath</span><span class="p">)</span> <span class="o">/</span> <span class="n">filename</span>
+
+     <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s1">&#39;rb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">inp</span><span class="p">:</span>
+         <span class="n">ct</span> <span class="o">=</span> <span class="n">pickle</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">inp</span><span class="p">)</span>
+     <span class="k">return</span> <span class="n">ct</span>    </div>
+
+
+
+<div class="viewcode-block" id="pcaAndConcat"><a class="viewcode-back" href="../modules.html#utils.pcaAndConcat">[docs]</a><span class="k">def</span> <span class="nf">pcaAndConcat</span><span class="p">(</span><span class="n">vec_train</span><span class="p">,</span> <span class="n">vec_test</span><span class="p">,</span> <span class="n">n_components</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span> <span class="n">scaleData</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Calls: </span>
+<span class="sd">    Called by: main method as needed    </span>
+<span class="sd">    </span>
+<span class="sd">    </span>
+<span class="sd">    Desc</span>
+<span class="sd">    ----</span>
+<span class="sd">        Given a dictionray with keys as respective cat-columns </span>
+<span class="sd">        and the values as dataframes (of unitvectors), the function </span>
+<span class="sd">        performs PCA on each value (ie. the dataframe) and outputs </span>
+<span class="sd">        one concatenated DataFrame. This it does for both train/test</span>
+<span class="sd">        dictionaries. </span>
+<span class="sd">    </span>
+<span class="sd">    Example: </span>
+<span class="sd">        Assume our original training data had 5-cat columns. These</span>
+<span class="sd">        5-cat-cols would be keys of dict: vec_train and vec_test. </span>
+<span class="sd">        Corresponding to every key the input dict will have </span>
+<span class="sd">        5-dataframes of unit vectors as values. No of rows in each </span>
+<span class="sd">        dataFrame would be the same, that is, as many as in train/test </span>
+<span class="sd">        data. We then take PCA of each dataframe and reduce the </span>
+<span class="sd">        unit vectors to n_components (default is 2 columns). Thus, </span>
+<span class="sd">        we will have 5 X n_components in all. We concatenate these </span>
+<span class="sd">        5 X n_components (or columns) to make our training/test data.</span>
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    </span>
+<span class="sd">    vec_train: Dictionary of Dataframes with keys as cat-cols.</span>
+<span class="sd">               It would contain unit vectors per-level per-row </span>
+<span class="sd">               for each cat col of train data.</span>
+<span class="sd">               </span>
+<span class="sd">    vec_test:  Same as vect_train but for tes data        </span>
+<span class="sd">               </span>
+<span class="sd">    n_components: int, No of PCA components to reduce each DataFrame to.</span>
+<span class="sd">                  Default is 2.</span>
+<span class="sd">    scaleData: boolean; Should data be centered and scaled before PCA?</span>
+<span class="sd">               Default is True.</span>
+<span class="sd">    </span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    </span>
+<span class="sd">    Concated dataframes and two dictionaries. Each dictionary is of </span>
+<span class="sd">    DataFrames, as before, except that evry DataFrame that was input</span>
+<span class="sd">    is replaced by its PCA version with as many columns as n_components.</span>
+<span class="sd">    Two dictionaries returned are mainly for debugging purposes.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="c1"># Do not alter original dataframes</span>
+    <span class="n">vt</span> <span class="o">=</span> <span class="n">vec_train</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="n">ve</span> <span class="o">=</span> <span class="n">vec_test</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+    <span class="c1"># What all columns exist?</span>
+    <span class="n">rt</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">vt</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+    
+    <span class="c1"># For every col in rt</span>
+    <span class="c1"># StandardScale before PCA</span>
+    <span class="k">if</span> <span class="n">scaleData</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">rt</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Performing PCA for column, </span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2"> , in train data&quot;</span><span class="p">)</span>
+            <span class="c1"># Instantiate PCA</span>
+            <span class="n">pca</span> <span class="o">=</span> <span class="n">PCA</span><span class="p">(</span><span class="n">n_components</span> <span class="o">=</span> <span class="n">n_components</span><span class="p">)</span>
+            <span class="n">ss</span> <span class="o">=</span> <span class="n">StandardScaler</span><span class="p">()</span>
+            <span class="c1"># Perform PCA of train DataFrame of unit vectors</span>
+            <span class="n">k</span> <span class="o">=</span> <span class="n">pca</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">ss</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">vec_train</span><span class="p">[</span><span class="n">key</span><span class="p">]))</span>
+            <span class="n">vt</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;pc&#39;</span> <span class="o">+</span> <span class="n">key</span><span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_components</span><span class="p">)])</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Performing PCA for column, </span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2"> , in test data&quot;</span><span class="p">)</span>
+            <span class="c1"># Transform test data now</span>
+            <span class="n">k</span> <span class="o">=</span> <span class="n">pca</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">ss</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">vec_test</span><span class="p">[</span><span class="n">key</span><span class="p">]))</span>
+            <span class="n">ve</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;pc&#39;</span> <span class="o">+</span> <span class="n">key</span> <span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_components</span><span class="p">)])</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">rt</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Performing PCA for column, </span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2"> , in train data&quot;</span><span class="p">)</span>
+            <span class="c1"># Instantiate PCA</span>
+            <span class="n">pca</span> <span class="o">=</span> <span class="n">PCA</span><span class="p">(</span><span class="n">n_components</span> <span class="o">=</span> <span class="n">n_components</span><span class="p">)</span>
+            <span class="c1"># Perform PCA of train DataFrame of unit vectors</span>
+            <span class="n">k</span> <span class="o">=</span> <span class="n">pca</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">vec_train</span><span class="p">[</span><span class="n">key</span><span class="p">])</span>
+            <span class="n">vt</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;pc&#39;</span> <span class="o">+</span> <span class="n">key</span><span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_components</span><span class="p">)])</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Performing PCA for column, </span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2"> , in test data&quot;</span><span class="p">)</span>
+            <span class="c1"># Transform test data now</span>
+            <span class="n">k</span> <span class="o">=</span> <span class="n">pca</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">vec_test</span><span class="p">[</span><span class="n">key</span><span class="p">])</span>
+            <span class="n">ve</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;pc&#39;</span> <span class="o">+</span> <span class="n">key</span> <span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_components</span><span class="p">)])</span>
+    
+    <span class="n">obj_tr</span> <span class="o">=</span> <span class="p">[</span> <span class="n">vt</span><span class="p">[</span><span class="n">rt</span><span class="p">[</span><span class="n">i</span><span class="p">]]</span>  <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">rt</span><span class="p">))]</span>
+    <span class="n">obj_te</span> <span class="o">=</span> <span class="p">[</span> <span class="n">ve</span><span class="p">[</span><span class="n">rt</span><span class="p">[</span><span class="n">i</span><span class="p">]]</span>  <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">rt</span><span class="p">))]</span>
+    <span class="c1"># Amended 24th Dec, 2023</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Concatenating PCAs of train data&quot;</span><span class="p">)</span>
+    <span class="n">cc_tr</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">obj_tr</span><span class="p">,</span> <span class="n">axis</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Concatenating PCAs of test data&quot;</span><span class="p">)</span>
+    <span class="n">cc_te</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">obj_te</span><span class="p">,</span> <span class="n">axis</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Done......&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">cc_tr</span><span class="p">,</span><span class="n">cc_te</span><span class="p">,</span>  <span class="n">vt</span> <span class="p">,</span><span class="n">ve</span><span class="p">,</span> </div>
+
+
+
+<span class="c1"># Ref: https://www.kaggle.com/code/ryanholbrook/mutual-information</span>
+<div class="viewcode-block" id="calMIScores"><a class="viewcode-back" href="../modules.html#utils.calMIScores">[docs]</a><span class="k">def</span> <span class="nf">calMIScores</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Desc</span>
+<span class="sd">    ---- </span>
+<span class="sd">    Calculates mutual information scores when target</span>
+<span class="sd">    is discrete.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    X : Pandas DataFrame </span>
+<span class="sd">    y : An array or Series; target</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    mi_scores : Pandas Series (sorted)</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="c1"># Get sores</span>
+    <span class="n">mi_scores</span> <span class="o">=</span> <span class="n">mutual_info_classif</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+    <span class="c1"># Transform mi_scores to a Series:</span>
+    <span class="n">mi_scores</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">mi_scores</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;MI Scores&quot;</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">X</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span>
+    <span class="c1"># Sort Series in Descending order:</span>
+    <span class="n">mi_scores</span> <span class="o">=</span> <span class="n">mi_scores</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="n">ascending</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">mi_scores</span></div>
+
+
+
+<div class="viewcode-block" id="plotSeries"><a class="viewcode-back" href="../modules.html#utils.plotSeries">[docs]</a><span class="k">def</span> <span class="nf">plotSeries</span><span class="p">(</span><span class="n">scores</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Desc</span>
+<span class="sd">    ----</span>
+<span class="sd">    Plots MI scores or feature impt by centrality </span>
+<span class="sd">    calculated by calMIScores() or by featureImptByCentrality()</span>
+<span class="sd">    Use it as:</span>
+<span class="sd">        plt.figure(dpi=100, figsize=(8, 5))</span>
+<span class="sd">        plotSeries(calMIScores(X, y), someTitle)</span>
+<span class="sd">        OR, as</span>
+<span class="sd">        plotSeries(featureImptByCentrality, someTitle)</span>
+<span class="sd">        </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    scores: Pandas Series</span>
+<span class="sd">    title: Graph title; default: Empty str</span>
+<span class="sd">    </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Scores sorted in ascending order:</span>
+    <span class="n">scores</span> <span class="o">=</span> <span class="n">scores</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="n">ascending</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="c1"># Map parameters:</span>
+    <span class="n">width</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">scores</span><span class="p">))</span>
+    <span class="c1"># Write ticks as per scores index:</span>
+    <span class="n">ticks</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">scores</span><span class="o">.</span><span class="n">index</span><span class="p">)</span>
+    <span class="c1"># Plot width:</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">barh</span><span class="p">(</span><span class="n">width</span><span class="p">,</span> <span class="n">scores</span><span class="p">)</span>
+    <span class="c1"># Plot yticks</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">yticks</span><span class="p">(</span><span class="n">width</span><span class="p">,</span> <span class="n">ticks</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="n">title</span><span class="p">)</span></div>
+    
+    
+
+<div class="viewcode-block" id="featureImptByCentFeatCounts"><a class="viewcode-back" href="../modules.html#utils.featureImptByCentFeatCounts">[docs]</a><span class="k">def</span> <span class="nf">featureImptByCentFeatCounts</span><span class="p">(</span><span class="n">colList</span><span class="p">,</span> <span class="n">normalize</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Desc</span>
+<span class="sd">    ----</span>
+<span class="sd">    In the colList, how many columns pertain to</span>
+<span class="sd">    degree centrality, eigenvector centrality,</span>
+<span class="sd">    page-rank and clustering coeff. Plot</span>
+<span class="sd">    by using plotSeries().</span>
+<span class="sd">    </span>
+<span class="sd">    Example:</span>
+<span class="sd">        Here is a table of col-name wise xgboost impt score</span>
+<span class="sd">        </span>
+<span class="sd">        deg_abc   0.01</span>
+<span class="sd">        pr_cde    0.02</span>
+<span class="sd">        pr_def    0.015</span>
+<span class="sd">        eig_xy    0.11</span>
+<span class="sd">        deg_ff    0.001</span>
+<span class="sd">        deg_uy    0.01</span>
+<span class="sd">        </span>
+<span class="sd">    Result (normalized):</span>
+<span class="sd">        </span>
+<span class="sd">        degree      3/6</span>
+<span class="sd">        pagerank    2/6</span>
+<span class="sd">        eigenvector 1/6</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    colList : A list of columns</span>
+<span class="sd">    normalize: Boolean</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    d : A sorted pandas Series</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">d</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;degree&#39;</span> <span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;pagerank&#39;</span> <span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;eigenvector&#39;</span> <span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;clusteringcoeff&#39;</span> <span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+         <span class="s2">&quot;betweenness&quot;</span> <span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;avgembeddedness&#39;</span> <span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;leidencomsdensity&#39;</span> <span class="p">:</span> <span class="mi">0</span><span class="p">}</span>
+    <span class="n">deg</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">colList</span> <span class="k">if</span> <span class="s1">&#39;deg_&#39;</span> <span class="ow">in</span> <span class="n">i</span> <span class="p">]</span>
+    <span class="n">d</span><span class="p">[</span><span class="s1">&#39;degree&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">deg</span><span class="p">)</span>
+    <span class="n">pr</span> <span class="o">=</span>  <span class="p">[</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">colList</span> <span class="k">if</span> <span class="s1">&#39;pr_&#39;</span> <span class="ow">in</span> <span class="n">i</span> <span class="p">]</span>
+    <span class="n">d</span><span class="p">[</span><span class="s1">&#39;pagerank&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">pr</span><span class="p">)</span>       
+    <span class="n">eig</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">colList</span> <span class="k">if</span> <span class="s1">&#39;eig_&#39;</span> <span class="ow">in</span> <span class="n">i</span> <span class="p">]</span> 
+    <span class="n">d</span><span class="p">[</span><span class="s1">&#39;eigenvector&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">eig</span><span class="p">)</span>      
+    <span class="n">clu</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">colList</span> <span class="k">if</span> <span class="s1">&#39;clu_&#39;</span> <span class="ow">in</span> <span class="n">i</span> <span class="p">]</span>
+    <span class="n">d</span><span class="p">[</span><span class="s1">&#39;clusteringcoeff&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">clu</span><span class="p">)</span>
+    <span class="n">bet</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">colList</span> <span class="k">if</span> <span class="s1">&#39;bet_&#39;</span> <span class="ow">in</span> <span class="n">i</span> <span class="p">]</span>
+    <span class="n">d</span><span class="p">[</span><span class="s1">&#39;betweenness&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">bet</span><span class="p">)</span>
+    <span class="n">ae</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">colList</span> <span class="k">if</span> <span class="s1">&#39;ae_&#39;</span> <span class="ow">in</span> <span class="n">i</span> <span class="p">]</span>
+    <span class="n">d</span><span class="p">[</span><span class="s1">&#39;avgembeddedness&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">ae</span><span class="p">)</span>
+    <span class="n">den</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">colList</span> <span class="k">if</span> <span class="s1">&#39;den_&#39;</span> <span class="ow">in</span> <span class="n">i</span> <span class="p">]</span>
+    <span class="n">d</span><span class="p">[</span><span class="s1">&#39;leidencomsdensity&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">den</span><span class="p">)</span>
+    <span class="c1"># Transform d to pandas Series:</span>
+    <span class="n">d</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">d</span><span class="p">)</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="n">ascending</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">normalize</span><span class="p">):</span>
+        <span class="n">d</span> <span class="o">=</span> <span class="n">d</span><span class="o">/</span><span class="nb">sum</span><span class="p">(</span><span class="n">d</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">d</span></div>
+
+
+
+<div class="viewcode-block" id="featureImptByScore"><a class="viewcode-back" href="../modules.html#utils.featureImptByScore">[docs]</a><span class="k">def</span> <span class="nf">featureImptByScore</span><span class="p">(</span><span class="n">score</span><span class="p">,</span> <span class="n">colList</span><span class="p">,</span> <span class="n">normalize</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Desc</span>
+<span class="sd">    ----</span>
+<span class="sd">    In the colList, total score of columns</span>
+<span class="sd">    that pertain to degree centrality, to eigenvector</span>
+<span class="sd">    centrality, to page-rank and clustering coeff and </span>
+<span class="sd">    others. Plot by using plotSeries().</span>
+<span class="sd">    </span>
+<span class="sd">    Example:</span>
+<span class="sd">        Here is a table of col-name wise xgboost impt score</span>
+<span class="sd">        </span>
+<span class="sd">        deg_abc   0.01</span>
+<span class="sd">        pr_cde    0.02</span>
+<span class="sd">        pr_def    0.015</span>
+<span class="sd">        eig_xy    0.11</span>
+<span class="sd">        deg_ff    0.001</span>
+<span class="sd">        </span>
+<span class="sd">    Result:</span>
+<span class="sd">        degree      0.011</span>
+<span class="sd">        pagerank    0.035</span>
+<span class="sd">        eigenvector 0.11</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    score: Pandas Series giving column wise impt score</span>
+<span class="sd">    colList : A list of dataframe columns</span>
+<span class="sd">    normalize: Boolean</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    d : A sorted pandas Series</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">d</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;degree&#39;</span> <span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;pagerank&#39;</span> <span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;eigenvector&#39;</span> <span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;clusteringcoeff&#39;</span> <span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+         <span class="s2">&quot;betweenness&quot;</span> <span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;avgembeddedness&#39;</span> <span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;leidencomsdensity&#39;</span> <span class="p">:</span> <span class="mi">0</span><span class="p">}</span>
+    <span class="n">deg</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">colList</span> <span class="k">if</span> <span class="s1">&#39;deg_&#39;</span> <span class="ow">in</span> <span class="n">i</span> <span class="p">]</span>
+    <span class="n">d</span><span class="p">[</span><span class="s1">&#39;degree&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">score</span><span class="p">[</span><span class="n">deg</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+    <span class="n">pr</span> <span class="o">=</span>  <span class="p">[</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">colList</span> <span class="k">if</span> <span class="s1">&#39;pr_&#39;</span> <span class="ow">in</span> <span class="n">i</span> <span class="p">]</span>
+    <span class="n">d</span><span class="p">[</span><span class="s1">&#39;pagerank&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">score</span><span class="p">[</span><span class="n">pr</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>      
+    <span class="n">eig</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">colList</span> <span class="k">if</span> <span class="s1">&#39;eig_&#39;</span> <span class="ow">in</span> <span class="n">i</span> <span class="p">]</span> 
+    <span class="n">d</span><span class="p">[</span><span class="s1">&#39;eigenvector&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">score</span><span class="p">[</span><span class="n">eig</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>    
+    <span class="n">clu</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">colList</span> <span class="k">if</span> <span class="s1">&#39;clu_&#39;</span> <span class="ow">in</span> <span class="n">i</span> <span class="p">]</span>
+    <span class="n">d</span><span class="p">[</span><span class="s1">&#39;clusteringcoeff&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">score</span><span class="p">[</span><span class="n">clu</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+    <span class="n">bet</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">colList</span> <span class="k">if</span> <span class="s1">&#39;bet_&#39;</span> <span class="ow">in</span> <span class="n">i</span> <span class="p">]</span>
+    <span class="n">d</span><span class="p">[</span><span class="s1">&#39;betweenness&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">score</span><span class="p">[</span><span class="n">bet</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+    <span class="n">ae</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">colList</span> <span class="k">if</span> <span class="s1">&#39;ae_&#39;</span> <span class="ow">in</span> <span class="n">i</span> <span class="p">]</span>
+    <span class="n">d</span><span class="p">[</span><span class="s1">&#39;avgembeddedness&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">score</span><span class="p">[</span><span class="n">ae</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+    <span class="n">den</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">colList</span> <span class="k">if</span> <span class="s1">&#39;den_&#39;</span> <span class="ow">in</span> <span class="n">i</span> <span class="p">]</span>
+    <span class="n">d</span><span class="p">[</span><span class="s1">&#39;leidencomsdensity&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">score</span><span class="p">[</span><span class="n">den</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+    <span class="c1"># Transform d to pandas Series:</span>
+    <span class="n">d</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">d</span><span class="p">)</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="n">ascending</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">normalize</span><span class="p">):</span>
+        <span class="n">d</span> <span class="o">=</span> <span class="n">d</span><span class="o">/</span><span class="nb">sum</span><span class="p">(</span><span class="n">d</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">d</span></div>
+ 
+
+      
+       
+<div class="viewcode-block" id="plotBipartiteGraph"><a class="viewcode-back" href="../modules.html#utils.plotBipartiteGraph">[docs]</a><span class="k">def</span> <span class="nf">plotBipartiteGraph</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">pathToFolder</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="kc">None</span> <span class="p">,</span> <span class="n">title</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">node_size</span> <span class="o">=</span> <span class="mi">30</span><span class="p">,</span> <span class="n">connected</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">takeGraphSample</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">noSampleNodes</span><span class="o">=</span><span class="mi">100</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Plots a bipartitie graph.  </span>
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    filename : Filename</span>
+<span class="sd">    pathToFolder : Folder where file resides</span>
+<span class="sd">    ax: Matplotlib axis</span>
+<span class="sd">    connected: Boolean; Show only connected nodes</span>
+<span class="sd">               Default is False</span>
+<span class="sd">    takeGraphSample: boolean; Take a sample of graph for plotting</span>
+<span class="sd">    noSampleNodes: int; No of nodes to be taken if takeGraphSample is True </span>
+<span class="sd">          </span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    None.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">filepath</span> <span class="o">=</span> <span class="n">pathToFolder</span> <span class="o">/</span> <span class="n">filename</span>
+    <span class="n">G</span> <span class="o">=</span> <span class="n">nx</span><span class="o">.</span><span class="n">read_gml</span><span class="p">(</span><span class="n">filepath</span><span class="p">)</span> 
+    
+    <span class="c1"># Ref: https://stackoverflow.com/a/62407941/3282777</span>
+    <span class="k">if</span> <span class="n">takeGraphSample</span><span class="p">:</span>
+        <span class="n">sampled_nodes</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">G</span><span class="o">.</span><span class="n">nodes</span><span class="p">,</span> <span class="n">noSampleNodes</span><span class="p">)</span>
+        <span class="n">G</span> <span class="o">=</span> <span class="n">G</span><span class="o">.</span><span class="n">subgraph</span><span class="p">(</span><span class="n">sampled_nodes</span><span class="p">)</span>
+    
+    <span class="k">if</span> <span class="n">connected</span><span class="p">:</span>
+      <span class="n">gcc</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">nx</span><span class="o">.</span><span class="n">connected_components</span><span class="p">(</span><span class="n">G</span><span class="p">),</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
+      <span class="c1"># subgraph of connected nodes:</span>
+      <span class="n">H</span> <span class="o">=</span> <span class="n">G</span><span class="o">.</span><span class="n">subgraph</span><span class="p">(</span><span class="n">gcc</span><span class="p">)</span>
+      <span class="n">GH</span> <span class="o">=</span> <span class="n">H</span>
+    <span class="k">else</span><span class="p">:</span>
+      <span class="n">GH</span> <span class="o">=</span> <span class="n">G</span>  
+      
+    <span class="n">color_dict</span> <span class="o">=</span> <span class="p">{</span><span class="mi">0</span><span class="p">:</span><span class="s1">&#39;b&#39;</span><span class="p">,</span><span class="mi">1</span><span class="p">:</span><span class="s1">&#39;r&#39;</span><span class="p">}</span>
+    <span class="n">color_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">color_dict</span><span class="p">[</span><span class="n">i</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">GH</span><span class="o">.</span><span class="n">nodes</span><span class="o">.</span><span class="n">data</span><span class="p">(</span><span class="s1">&#39;bipartite&#39;</span><span class="p">)]</span>
+    <span class="n">color_list</span>
+    <span class="n">pos</span> <span class="o">=</span> <span class="n">nx</span><span class="o">.</span><span class="n">spring_layout</span><span class="p">(</span><span class="n">GH</span><span class="p">,</span> <span class="n">k</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">scale</span> <span class="o">=</span> <span class="mi">4</span><span class="p">,</span> <span class="n">iterations</span> <span class="o">=</span> <span class="mi">1000</span><span class="p">)</span>
+    <span class="c1">#plt.figure(figsize= (10,5));</span>
+    <span class="c1">#ax = plt.gca();</span>
+    <span class="n">nx</span><span class="o">.</span><span class="n">draw</span><span class="p">(</span><span class="n">GH</span><span class="p">,</span> 
+            <span class="n">pos</span><span class="o">=</span> <span class="n">pos</span><span class="p">,</span>
+            <span class="n">node_size</span><span class="o">=</span> <span class="n">node_size</span><span class="p">,</span>
+            <span class="n">with_labels</span> <span class="o">=</span>  <span class="kc">False</span><span class="p">,</span>
+            <span class="n">font_size</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span>
+            <span class="n">node_color</span> <span class="o">=</span> <span class="n">color_list</span><span class="p">,</span>
+            <span class="n">ax</span> <span class="o">=</span><span class="n">ax</span><span class="p">,</span>
+            <span class="n">width</span> <span class="o">=</span> <span class="mf">0.1</span>  <span class="c1"># edge width</span>
+            <span class="p">);</span>
+    
+    <span class="n">fontx</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;color&#39;</span><span class="p">:</span><span class="s1">&#39;green&#39;</span><span class="p">,</span><span class="s1">&#39;size&#39;</span><span class="p">:</span><span class="mi">8</span><span class="p">}</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="n">title</span><span class="p">,</span> <span class="n">fontdict</span> <span class="o">=</span> <span class="n">fontx</span><span class="p">);</span></div>
+
+
+
+
+<div class="viewcode-block" id="plotUnipartiteGraph"><a class="viewcode-back" href="../modules.html#utils.plotUnipartiteGraph">[docs]</a><span class="k">def</span> <span class="nf">plotUnipartiteGraph</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">pathToFolder</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span><span class="n">title</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">node_size</span> <span class="o">=</span> <span class="mi">30</span><span class="p">,</span> <span class="n">connected</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">takeGraphSample</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">noSampleNodes</span><span class="o">=</span><span class="mi">100</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Plots a unipartite graph</span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    filename : graph file.</span>
+<span class="sd">    pathToFolder : Path to folder of graph file.</span>
+<span class="sd">    takeGraphSample: boolean; Take a sample of graph for plotting</span>
+<span class="sd">    noSampleNodes: int; No of nodes to be taken if takeGraphSample is True </span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    None.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">filepath</span> <span class="o">=</span> <span class="n">pathToFolder</span> <span class="o">/</span> <span class="n">filename</span>
+    <span class="n">G</span> <span class="o">=</span> <span class="n">nx</span><span class="o">.</span><span class="n">read_gml</span><span class="p">(</span><span class="n">filepath</span><span class="p">)</span> 
+    
+    <span class="c1"># If network is very large, take a sanple</span>
+    <span class="c1"># Ref: https://stackoverflow.com/a/62407941/3282777</span>
+    <span class="k">if</span> <span class="n">takeGraphSample</span><span class="p">:</span>
+        <span class="n">sampled_nodes</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">G</span><span class="o">.</span><span class="n">nodes</span><span class="p">,</span> <span class="n">noSampleNodes</span><span class="p">)</span>
+        <span class="n">G</span> <span class="o">=</span> <span class="n">G</span><span class="o">.</span><span class="n">subgraph</span><span class="p">(</span><span class="n">sampled_nodes</span><span class="p">)</span>
+    
+    <span class="k">if</span> <span class="n">connected</span><span class="p">:</span>
+        <span class="n">gcc</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">nx</span><span class="o">.</span><span class="n">connected_components</span><span class="p">(</span><span class="n">G</span><span class="p">),</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
+        <span class="c1"># subgraph of connected nodes:</span>
+        <span class="n">H</span> <span class="o">=</span> <span class="n">G</span><span class="o">.</span><span class="n">subgraph</span><span class="p">(</span><span class="n">gcc</span><span class="p">)</span>
+        <span class="n">GH</span> <span class="o">=</span> <span class="n">H</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">GH</span> <span class="o">=</span> <span class="n">G</span>
+    <span class="n">pos</span> <span class="o">=</span> <span class="n">nx</span><span class="o">.</span><span class="n">spring_layout</span><span class="p">(</span><span class="n">GH</span><span class="p">,</span> <span class="n">k</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span>
+    <span class="c1">#plt.figure(figsize= (10,5));</span>
+    <span class="c1">#ax = plt.gca();</span>
+    <span class="n">nx</span><span class="o">.</span><span class="n">draw</span><span class="p">(</span><span class="n">GH</span><span class="p">,</span> 
+            <span class="n">pos</span><span class="o">=</span> <span class="n">pos</span><span class="p">,</span>
+            <span class="n">node_size</span> <span class="o">=</span> <span class="n">node_size</span><span class="p">,</span>
+            <span class="n">with_labels</span> <span class="o">=</span>  <span class="kc">False</span><span class="p">,</span>
+            <span class="n">font_size</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span>
+            <span class="n">ax</span> <span class="o">=</span><span class="n">ax</span><span class="p">,</span>
+            <span class="n">width</span> <span class="o">=</span> <span class="mf">0.1</span>  <span class="c1"># edge width</span>
+            <span class="p">);</span>
+
+    <span class="n">fontx</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;color&#39;</span><span class="p">:</span><span class="s1">&#39;green&#39;</span><span class="p">,</span><span class="s1">&#39;size&#39;</span><span class="p">:</span><span class="mi">8</span><span class="p">}</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="n">title</span><span class="p">,</span> <span class="n">fontdict</span> <span class="o">=</span> <span class="n">fontx</span><span class="p">);</span></div>
+   
+
+    
+<span class="c1"># Community visualization</span>
+<span class="c1"># Kaggle: https://www.kaggle.com/code/rahulgoel1106/commmunity-detection-using-igraph-and-networkx</span>
+<div class="viewcode-block" id="communityVisualization"><a class="viewcode-back" href="../modules.html#utils.communityVisualization">[docs]</a><span class="k">def</span> <span class="nf">communityVisualization</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">pathToFolder</span><span class="p">,</span> <span class="n">algo</span> <span class="o">=</span> <span class="n">nx</span><span class="o">.</span><span class="n">community</span><span class="o">.</span><span class="n">greedy_modularity_communities</span> <span class="p">,</span>
+                           <span class="n">ax</span><span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">title</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">withLabels</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">font_size</span> <span class="o">=</span> <span class="mi">8</span><span class="p">,</span> <span class="n">edgewidth</span> <span class="o">=</span> <span class="mf">0.1</span><span class="p">,</span>
+                           <span class="n">node_size</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">k</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">colorList</span> <span class="o">=</span>  <span class="p">[</span><span class="s2">&quot;orange&quot;</span><span class="p">,</span><span class="s2">&quot;yellow&quot;</span><span class="p">,</span><span class="s2">&quot;cyan&quot;</span><span class="p">,</span><span class="s2">&quot;green&quot;</span><span class="p">,</span><span class="s2">&quot;red&quot;</span><span class="p">,</span> <span class="s2">&quot;purple&quot;</span><span class="p">]</span><span class="o">*</span><span class="mi">20</span><span class="p">,</span>
+                           <span class="n">takeGraphSample</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">noSampleNodes</span><span class="o">=</span><span class="mi">100</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Desc</span>
+<span class="sd">    ----</span>
+<span class="sd">    Displays communities created by given community algo.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    filename : str, Graph file</span>
+<span class="sd">    pathToFolder : str, Path to folder having graph files</span>
+<span class="sd">    algo: function object to create communities</span>
+<span class="sd">          Default: nx.community.greedy_modularity_communities </span>
+<span class="sd">          Examples: nx.community.kernighan_lin_bisection</span>
+<span class="sd">                    nx.community.greedy_modularity_communities</span>
+<span class="sd">                    nx.community.louvain_communities</span>
+<span class="sd">                    algorithms.leiden  (from cdlib library)</span>
+<span class="sd">    ax: Matplotlib axis object</span>
+<span class="sd">    withLabels : boolean, Should labels be displayed? The default is False.</span>
+<span class="sd">    font_size : int, Label font size. The default is 8.</span>
+<span class="sd">    edgewidth: float, Edge line width</span>
+<span class="sd">    node_size: int</span>
+<span class="sd">    k: float; optimal distance between nodes. </span>
+<span class="sd">    colorList: List of colors for difft communitied. </span>
+<span class="sd">               Default is: [&quot;orange&quot;,&quot;yellow&quot;,&quot;cyan&quot;,&quot;green&quot;,&quot;red&quot;,&quot;purple&quot;]*20</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    None.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">filepath</span> <span class="o">=</span> <span class="n">pathToFolder</span> <span class="o">/</span> <span class="n">filename</span>
+    <span class="n">G</span> <span class="o">=</span> <span class="n">nx</span><span class="o">.</span><span class="n">read_gml</span><span class="p">(</span><span class="n">filepath</span><span class="p">)</span> 
+    <span class="k">if</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">G</span><span class="o">.</span><span class="n">edges</span><span class="p">()))</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span> 
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;This network has no edges. Moving ahead.&quot;</span><span class="p">)</span>
+        <span class="k">return</span> 
+
+    
+    <span class="c1"># If network is very large, take a sanple</span>
+    <span class="c1"># Ref: https://stackoverflow.com/a/62407941/3282777</span>
+    <span class="k">if</span> <span class="n">takeGraphSample</span><span class="p">:</span>
+        <span class="n">sampled_nodes</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">G</span><span class="o">.</span><span class="n">nodes</span><span class="p">,</span> <span class="n">noSampleNodes</span><span class="p">)</span>
+        <span class="n">G</span> <span class="o">=</span> <span class="n">G</span><span class="o">.</span><span class="n">subgraph</span><span class="p">(</span><span class="n">sampled_nodes</span><span class="p">)</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">G</span><span class="o">.</span><span class="n">edges</span><span class="p">()))</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span> 
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;This network has no edges. Moving ahead.&quot;</span><span class="p">)</span>
+            <span class="k">return</span> 
+    
+    <span class="n">colors</span> <span class="o">=</span> <span class="n">colorList</span>
+    <span class="n">pos</span> <span class="o">=</span> <span class="n">nx</span><span class="o">.</span><span class="n">spring_layout</span><span class="p">(</span><span class="n">G</span><span class="p">,</span> <span class="n">k</span><span class="p">)</span>
+    
+    <span class="k">if</span> <span class="n">algo</span> <span class="o">==</span> <span class="n">nx</span><span class="o">.</span><span class="n">community</span><span class="o">.</span><span class="n">girvan_newman</span><span class="p">:</span>
+        <span class="n">lst_b</span> <span class="o">=</span> <span class="n">algo</span><span class="p">(</span><span class="n">G</span><span class="p">)</span>
+        <span class="n">lst_b</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="nb">sorted</span><span class="p">(</span><span class="n">c</span><span class="p">)</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="nb">next</span><span class="p">(</span><span class="n">lst_b</span><span class="p">))</span>
+        <span class="n">lst_b</span> <span class="o">=</span> <span class="p">[</span><span class="nb">frozenset</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">lst_b</span> <span class="p">]</span>
+    <span class="c1"># Changed on 27th July, 2023    </span>
+    <span class="k">if</span> <span class="n">algo</span> <span class="o">==</span>  <span class="n">algorithms</span><span class="o">.</span><span class="n">leiden</span><span class="p">:</span>
+        <span class="n">lst_b</span> <span class="o">=</span> <span class="n">algo</span><span class="p">(</span><span class="n">G</span><span class="p">)</span>
+        <span class="n">lst_b</span> <span class="o">=</span> <span class="p">[</span><span class="nb">frozenset</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">lst_b</span><span class="o">.</span><span class="n">communities</span> <span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">lst_b</span> <span class="o">=</span> <span class="n">algo</span><span class="p">(</span><span class="n">G</span><span class="p">)</span>    
+
+    
+    <span class="n">color_map_b</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">keys</span> <span class="o">=</span> <span class="n">G</span><span class="o">.</span><span class="n">nodes</span><span class="p">()</span>
+    <span class="n">values</span> <span class="o">=</span> <span class="s2">&quot;black&quot;</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">keys</span><span class="p">:</span>
+            <span class="n">color_map_b</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">values</span>
+    <span class="n">counter</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">lst_b</span><span class="p">:</span>
+      <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">x</span><span class="p">:</span>
+        <span class="n">color_map_b</span><span class="p">[</span><span class="n">n</span><span class="p">]</span> <span class="o">=</span> <span class="n">colorList</span><span class="p">[</span><span class="n">counter</span><span class="p">]</span>
+      <span class="n">counter</span> <span class="o">=</span> <span class="n">counter</span> <span class="o">+</span> <span class="mi">1</span>
+    <span class="n">nx</span><span class="o">.</span><span class="n">draw_networkx_edges</span><span class="p">(</span><span class="n">G</span><span class="p">,</span> <span class="n">pos</span><span class="p">,</span> <span class="n">width</span> <span class="o">=</span> <span class="n">edgewidth</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span><span class="n">ax</span><span class="p">);</span>
+    
+    <span class="k">if</span> <span class="n">node_size</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">nx</span><span class="o">.</span><span class="n">draw_networkx_nodes</span><span class="p">(</span><span class="n">G</span><span class="p">,</span> <span class="n">pos</span><span class="p">,</span> <span class="n">node_size</span> <span class="o">=</span> <span class="n">node_size</span><span class="p">,</span> <span class="n">node_color</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">color_map_b</span><span class="p">)</span><span class="o">.</span><span class="n">values</span><span class="p">(),</span> <span class="n">ax</span> <span class="o">=</span><span class="n">ax</span><span class="p">);</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">nx</span><span class="o">.</span><span class="n">draw_networkx_nodes</span><span class="p">(</span><span class="n">G</span><span class="p">,</span> <span class="n">pos</span><span class="p">,</span>  <span class="n">node_color</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">color_map_b</span><span class="p">)</span><span class="o">.</span><span class="n">values</span><span class="p">(),</span> <span class="n">ax</span> <span class="o">=</span><span class="n">ax</span><span class="p">);</span>
+    <span class="k">if</span> <span class="n">withLabels</span><span class="p">:</span>
+      <span class="n">nx</span><span class="o">.</span><span class="n">draw_networkx_labels</span><span class="p">(</span><span class="n">G</span><span class="p">,</span> <span class="n">pos</span><span class="p">,</span> <span class="n">font_size</span> <span class="o">=</span> <span class="n">font_size</span><span class="p">,</span> <span class="n">font_weight</span> <span class="o">=</span> <span class="s1">&#39;bold&#39;</span><span class="p">,</span><span class="n">ax</span> <span class="o">=</span><span class="n">ax</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s2">&quot;off&quot;</span><span class="p">);</span>
+    
+    <span class="n">fontx</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;color&#39;</span><span class="p">:</span><span class="s1">&#39;green&#39;</span><span class="p">,</span><span class="s1">&#39;size&#39;</span><span class="p">:</span><span class="mi">8</span><span class="p">}</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="n">title</span><span class="p">,</span> <span class="n">fontdict</span> <span class="o">=</span> <span class="n">fontx</span><span class="p">);</span></div>
+
+    <span class="c1">#plt.show();    </span>
+
+
+
+
+<div class="viewcode-block" id="transformBinnedDF2Communities"><a class="viewcode-back" href="../modules.html#utils.transformBinnedDF2Communities">[docs]</a><span class="k">def</span> <span class="nf">transformBinnedDF2Communities</span><span class="p">(</span><span class="n">columnNames</span><span class="p">,</span><span class="n">pathToGraphFolder</span><span class="p">,</span> <span class="n">train_binned</span><span class="p">,</span> <span class="n">algo</span><span class="o">=</span><span class="n">nx</span><span class="o">.</span><span class="n">community</span><span class="o">.</span><span class="n">greedy_modularity_communities</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Desc</span>
+<span class="sd">    -----</span>
+<span class="sd">    Replace every column in the binned the Dataframe as per network community</span>
+<span class="sd">    Example binned/discrete dataframe:</span>
+<span class="sd">            &#39;a&#39;     &#39;b</span>
+<span class="sd">            --      ---</span>
+<span class="sd">            434     709</span>
+<span class="sd">            435     789</span>
+<span class="sd">            23      710</span>
+<span class="sd">            78      756</span>
+
+<span class="sd">    Replace col &#39;a&#39; as per communities discovered in network &#39;a_projected_b.gml&#39;:</span>
+<span class="sd">    434 &amp; 435 belong to one community and 23 &amp; 78 to other.    </span>
+
+<span class="sd">            &#39;a&#39;     &#39;b&#39;</span>
+<span class="sd">            ---     ---</span>
+<span class="sd">             0      709</span>
+<span class="sd">             0      789</span>
+<span class="sd">             1      710</span>
+<span class="sd">             1      756</span>
+
+<span class="sd">    Similarly, replace col &#39;b&#39; as per communities in &#39;b_projected_a.gml&#39;:</span>
+
+<span class="sd">            &#39;a&#39;     &#39;b&#39;</span>
+<span class="sd">            ---     ---</span>
+<span class="sd">             0      1</span>
+<span class="sd">             0      0</span>
+<span class="sd">             1      0</span>
+<span class="sd">             1      1</span>
+<span class="sd">             </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    -----------     </span>
+<span class="sd">    columnNames: list of cat cols</span>
+<span class="sd">    pathToGraphFolder: str: Folder that has graph files     </span>
+<span class="sd">    train_binned: DataFrame with binned/discrete columns  </span>
+<span class="sd">    algo: function object: networkx algorithm to be used to </span>
+<span class="sd">          discover communities.</span>
+<span class="sd">          Examples: nx.community.kernighan_lin_bisection</span>
+<span class="sd">                    nx.community.greedy_modularity_communities</span>
+<span class="sd">                    nx.community.louvain_communities</span>
+
+<span class="sd">          </span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    map_list: list of dictionaries. Each dictionary maps</span>
+<span class="sd">              levels in a column to a community </span>
+<span class="sd">    df: DataFrame: Transformed train_binned DataFrame.</span>
+<span class="sd">        If train_binned had columns other than columnNames,</span>
+<span class="sd">        df would not contain those columns          </span>
+
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># 1. From col-names names, create graph filenames:</span>
+    <span class="c1"># Example: col-names: [&#39;a&#39;,&#39;b&#39;,&#39;c&#39;]</span>
+    <span class="c1"># First permute col-names in pairs of two:</span>
+    <span class="c1">#  p = (&#39;a&#39;,&#39;b&#39;),(&#39;b&#39;,&#39;a&#39;), (&#39;a&#39;,&#39;c&#39;),(&#39;c&#39;,&#39;a&#39;)...</span>
+    <span class="n">p</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">itertools</span><span class="o">.</span><span class="n">permutations</span><span class="p">(</span><span class="n">columnNames</span><span class="p">,</span><span class="mi">2</span><span class="p">))</span>
+    <span class="c1"># Prepare list of graph files:</span>
+    <span class="c1"># (&#39;a_projected_b.gml&#39;, &#39;b_projected_a.gml&#39;...)</span>
+    <span class="n">filelist</span> <span class="o">=</span> <span class="p">[]</span> 
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">p</span><span class="p">:</span>
+      <span class="n">filelist</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">i</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="s2">&quot;_projected_&quot;</span> <span class="o">+</span> <span class="n">i</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="s2">&quot;.gml&quot;</span><span class="p">)</span>
+    
+    <span class="c1"># Check if all files in filelist exist. Or which files exist?      </span>
+    <span class="n">filesexist</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">filelist</span><span class="p">:</span>
+        <span class="n">myfile</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">pathToGraphFolder</span><span class="p">)</span> <span class="o">/</span> <span class="n">i</span>
+        <span class="k">if</span> <span class="n">myfile</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+            <span class="n">filesexist</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> 
+            
+    <span class="n">filelist</span> <span class="o">=</span> <span class="n">filesexist</span>        
+
+    <span class="c1"># 2. For every file in the filelist</span>
+    <span class="n">map_list</span> <span class="o">=</span> <span class="p">[]</span>  <span class="c1"># Start with a blank list of dictionaries</span>
+    <span class="c1"># df will store dataframe train_binned after each bin-col is mapped</span>
+    <span class="c1">#  </span>
+    <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">file</span> <span class="ow">in</span> <span class="n">filelist</span><span class="p">:</span>
+      <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Reading file: &quot;</span><span class="p">,</span> <span class="n">file</span><span class="p">)</span>
+      <span class="c1"># 2.1 Load network</span>
+      <span class="c1"># Get full filename that includes filepath</span>
+      <span class="n">filepath</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">pathToGraphFolder</span><span class="p">)</span> <span class="o">/</span> <span class="n">file</span>
+      <span class="c1"># Read the file as a network</span>
+      <span class="n">G</span> <span class="o">=</span> <span class="n">nx</span><span class="o">.</span><span class="n">read_gml</span><span class="p">(</span><span class="n">filepath</span><span class="p">)</span>
+      <span class="k">if</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">G</span><span class="o">.</span><span class="n">edges</span><span class="p">()))</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span> 
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;This network has no edges. Moving ahead.&quot;</span><span class="p">)</span>
+        <span class="k">continue</span> 
+       
+      <span class="c1"># 2.2 Calculate community classes using algo</span>
+      <span class="c1">#    cm_mod contains as many frozensets of nodes</span>
+      <span class="c1">#    as there are communities:</span>
+          
+      <span class="k">if</span> <span class="n">algo</span> <span class="o">==</span> <span class="n">nx</span><span class="o">.</span><span class="n">community</span><span class="o">.</span><span class="n">girvan_newman</span><span class="p">:</span>
+          <span class="n">cm_mod</span> <span class="o">=</span> <span class="n">algo</span><span class="p">(</span><span class="n">G</span><span class="p">)</span>
+          <span class="n">cm_mod</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="nb">sorted</span><span class="p">(</span><span class="n">c</span><span class="p">)</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="nb">next</span><span class="p">(</span><span class="n">cm_mod</span><span class="p">))</span>
+          <span class="n">cm_mod</span> <span class="o">=</span> <span class="p">[</span><span class="nb">frozenset</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">cm_mod</span> <span class="p">]</span>
+      <span class="k">else</span><span class="p">:</span>
+          <span class="n">cm_mod</span> <span class="o">=</span> <span class="n">algo</span><span class="p">(</span><span class="n">G</span><span class="p">)</span>
+          <span class="c1">#print(cm_mod)</span>
+
+      <span class="c1"># 3.0 We now create dict corresponding to</span>
+      <span class="c1">#     all communities in cm_mod</span>
+      <span class="c1">#    Example:</span>
+      <span class="c1">#                 frozenset1         frozenset2</span>
+      <span class="c1">#   cm_mod:     [{&#39;434&#39;, &#39;435&#39; },    {&#39;23&#39; , &#39;78&#39;}]</span>
+      <span class="c1">#   fset_dict  {&#39;434&#39;: 0, &#39;435&#39; :0, &#39;23&#39; : 1, &#39;78&#39;: 1}</span>
+
+      <span class="n">counter</span> <span class="o">=</span> <span class="mi">0</span>  <span class="c1"># Assigns values in dict</span>
+      <span class="n">fset_dict</span> <span class="o">=</span> <span class="p">{}</span>  <span class="c1"># Start with blank dict</span>
+      <span class="c1"># For every frozenset</span>
+      <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">cm_mod</span><span class="p">:</span>
+        <span class="c1"># If set i is not a frozenset, make it so</span>
+        <span class="c1"># else its members cannot be used as dict keys</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="nb">frozenset</span><span class="p">):</span>
+            <span class="n">i</span> <span class="o">=</span> <span class="nb">frozenset</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+            
+        <span class="c1"># For every item in this frozenset</span>
+        <span class="k">for</span> <span class="n">g</span> <span class="ow">in</span> <span class="n">i</span><span class="p">:</span>
+          <span class="c1"># Set class to the value of counter</span>
+          <span class="n">fset_dict</span><span class="p">[</span><span class="n">g</span><span class="p">]</span> <span class="o">=</span> <span class="n">counter</span>
+
+        <span class="c1"># Increment counter for next class</span>
+        <span class="n">counter</span>  <span class="o">+=</span><span class="mi">1</span>
+      <span class="c1"># Now that map dict for the modularity</span>
+      <span class="c1"># classes are ready, append it to map_list</span>
+      <span class="n">map_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">fset_dict</span><span class="p">)</span>
+
+      <span class="c1"># Extract column name from file:</span>
+      <span class="n">colToProject</span> <span class="o">=</span> <span class="n">file</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;_&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+      <span class="c1"># Map train_binned column using the dict</span>
+      <span class="n">df</span><span class="p">[</span><span class="n">file</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">train_binned</span><span class="p">[</span><span class="n">colToProject</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">str</span><span class="p">))</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">fset_dict</span><span class="p">)</span>
+      <span class="c1"># Continue for loop for the next filelist</span>
+    <span class="k">return</span> <span class="n">map_list</span><span class="p">,</span><span class="n">df</span></div>
+
+
+
+
+<div class="viewcode-block" id="transformBinnedDF2CommunitiesAll"><a class="viewcode-back" href="../modules.html#utils.transformBinnedDF2CommunitiesAll">[docs]</a><span class="k">def</span> <span class="nf">transformBinnedDF2CommunitiesAll</span><span class="p">(</span><span class="n">pathToGraphFolder</span><span class="p">,</span> <span class="n">train_binned</span><span class="p">,</span> <span class="n">algo</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Desc</span>
+<span class="sd">    -----</span>
+<span class="sd">    Search out all graph files and Replace every column in the binned Dataframe </span>
+<span class="sd">    as per network community</span>
+<span class="sd">    Example binned/discrete dataframe:</span>
+<span class="sd">            &#39;a&#39;     &#39;b</span>
+<span class="sd">            --      ---</span>
+<span class="sd">            434     709</span>
+<span class="sd">            435     789</span>
+<span class="sd">            23      710</span>
+<span class="sd">            78      756</span>
+
+<span class="sd">    Replace col &#39;a&#39; as per communities discovered in network &#39;a_projected_b.gml&#39;:</span>
+<span class="sd">    434 &amp; 435 belong to one community and 23 &amp; 78 to other.</span>
+
+<span class="sd">            &#39;a&#39;     &#39;b&#39;</span>
+<span class="sd">            ---     ---</span>
+<span class="sd">             0      709</span>
+<span class="sd">             0      789</span>
+<span class="sd">             1      710</span>
+<span class="sd">             1      756</span>
+
+<span class="sd">    Similarly, replace col &#39;b&#39; as per communities in &#39;b_projected_a.gml&#39;:</span>
+
+<span class="sd">            &#39;a&#39;     &#39;b&#39;</span>
+<span class="sd">            ---     ---</span>
+<span class="sd">             0      1</span>
+<span class="sd">             0      0</span>
+<span class="sd">             1      0</span>
+<span class="sd">             1      1</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    -----------</span>
+<span class="sd">    pathToGraphFolder: str: Folder that has graph files</span>
+<span class="sd">    train_binned: DataFrame with binned/discrete columns</span>
+<span class="sd">    algo: function object: networkx algorithm to be used to</span>
+<span class="sd">          discover communities.</span>
+<span class="sd">          Example: nx.community.greedy_modularity_communities</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    map_list: list of dictionaries. Each dictionary maps</span>
+<span class="sd">              levels in a column to a community</span>
+<span class="sd">    df: DataFrame: Transformed train_binned DataFrame.</span>
+<span class="sd">        If train_binned had columns other than columnNames,</span>
+<span class="sd">        df would not contain those columns</span>
+
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># 15.1 Path where .gml files are placed:</span>
+
+    <span class="c1"># 1. From col-names names, create graph filenames:</span>
+    <span class="n">filelist</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">Path</span><span class="p">(</span><span class="n">pathToGraphFolder</span><span class="p">)</span><span class="o">.</span><span class="n">iterdir</span><span class="p">()))</span>
+    <span class="n">filelist</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span>   <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">filelist</span> <span class="k">if</span> <span class="s2">&quot;_projected_&quot;</span> <span class="ow">in</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="p">]</span>
+    <span class="n">filelist</span> <span class="o">=</span> <span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>   <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">filelist</span> <span class="p">]</span>
+
+    <span class="c1"># 2. For every file in the filelist</span>
+    <span class="n">map_list</span> <span class="o">=</span> <span class="p">[]</span>  <span class="c1"># Start with a blank list of dictionaries</span>
+    <span class="c1"># df will store dataframe train_binned after each bin-col is mapped</span>
+    <span class="c1">#</span>
+    <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">file</span> <span class="ow">in</span> <span class="n">filelist</span><span class="p">:</span>
+      <span class="c1"># 2.1 Load network</span>
+      <span class="c1"># Get full filename that includes filepath</span>
+      <span class="n">filepath</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">pathToGraphFolder</span><span class="p">)</span> <span class="o">/</span> <span class="n">file</span>
+      <span class="c1"># Read the file as a network</span>
+      <span class="n">G</span> <span class="o">=</span> <span class="n">nx</span><span class="o">.</span><span class="n">read_gml</span><span class="p">(</span><span class="n">filepath</span><span class="p">)</span>
+
+      <span class="c1"># 2.2 Calculate community classes using algo</span>
+      <span class="c1">#    cm_mod contains as many frozensets of nodes</span>
+      <span class="c1">#    as there are communities:</span>
+          
+      <span class="k">if</span> <span class="n">algo</span> <span class="o">==</span> <span class="n">nx</span><span class="o">.</span><span class="n">community</span><span class="o">.</span><span class="n">girvan_newman</span><span class="p">:</span>
+          <span class="n">cm_mod</span> <span class="o">=</span> <span class="n">algo</span><span class="p">(</span><span class="n">G</span><span class="p">)</span>
+          <span class="n">cm_mod</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="nb">sorted</span><span class="p">(</span><span class="n">c</span><span class="p">)</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="nb">next</span><span class="p">(</span><span class="n">cm_mod</span><span class="p">))</span>
+          <span class="n">cm_mod</span> <span class="o">=</span> <span class="p">[</span><span class="nb">frozenset</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">cm_mod</span> <span class="p">]</span>
+      <span class="k">else</span><span class="p">:</span>
+          <span class="n">cm_mod</span> <span class="o">=</span> <span class="n">algo</span><span class="p">(</span><span class="n">G</span><span class="p">)</span>
+
+      <span class="c1"># 3.0 We now create dict corresponding to</span>
+      <span class="c1">#     all communities in cm_mod</span>
+      <span class="c1">#    Example:</span>
+      <span class="c1">#                 frozenset1         frozenset2</span>
+      <span class="c1">#   cm_mod:     [ {&#39;434&#39;, &#39;435&#39; },    {&#39;23&#39; , &#39;78&#39;}]</span>
+      <span class="c1">#   fset_dict  {&#39;434&#39;: 0, &#39;435&#39; :0, &#39;23&#39; : 1, &#39;78&#39;: 1}</span>
+
+      <span class="n">counter</span> <span class="o">=</span> <span class="mi">0</span>  <span class="c1"># Assigns values in dict</span>
+      <span class="n">fset_dict</span> <span class="o">=</span> <span class="p">{}</span>  <span class="c1"># Start with blank dict</span>
+      <span class="c1"># For every frozenset</span>
+      <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">cm_mod</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="nb">frozenset</span><span class="p">):</span>
+          <span class="n">i</span> <span class="o">=</span> <span class="nb">frozenset</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+        <span class="c1"># For every item in this frozenset</span>
+        <span class="k">for</span> <span class="n">g</span> <span class="ow">in</span> <span class="n">i</span><span class="p">:</span>
+          <span class="c1"># Set class to the value of counter</span>
+          <span class="n">fset_dict</span><span class="p">[</span><span class="n">g</span><span class="p">]</span> <span class="o">=</span> <span class="n">counter</span>
+
+        <span class="c1"># Increment counter for next class</span>
+        <span class="n">counter</span>  <span class="o">+=</span><span class="mi">1</span>
+      <span class="c1"># Now that map dict for the modularity</span>
+      <span class="c1"># classes are ready, append it to map_list</span>
+      <span class="n">map_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">fset_dict</span><span class="p">)</span>
+
+      <span class="c1"># Extract column name from file:</span>
+      <span class="n">colToProject</span> <span class="o">=</span> <span class="n">file</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;_projected_&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+      <span class="c1"># Map train_binned column using the dict</span>
+      <span class="k">if</span> <span class="n">colToProject</span> <span class="ow">in</span> <span class="n">train_binned</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
+        <span class="n">df</span><span class="p">[</span><span class="n">file</span><span class="p">]</span> <span class="o">=</span> <span class="n">train_binned</span><span class="p">[</span><span class="n">colToProject</span><span class="p">]</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">fset_dict</span><span class="p">)</span>
+      <span class="c1"># Continue for loop for the next filelist</span>
+    <span class="k">return</span> <span class="n">map_list</span><span class="p">,</span><span class="n">df</span></div>
+    
+
+
+<span class="c1"># Function to remove const columns from DataFrame</span>
+<span class="c1"># https://stackoverflow.com/a/20210048</span>
+<div class="viewcode-block" id="remConstColumns"><a class="viewcode-back" href="../modules.html#utils.remConstColumns">[docs]</a><span class="k">def</span> <span class="nf">remConstColumns</span><span class="p">(</span><span class="n">df</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Desc</span>
+<span class="sd">    ----</span>
+<span class="sd">    Removes const columns from dataframe df</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    df : pandas DataFrame</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    df : pandas DataFrame</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Datashape before processing: </span><span class="si">{</span><span class="n">df</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span> <span class="p">(</span><span class="n">df</span> <span class="o">!=</span> <span class="n">df</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">.</span><span class="n">any</span><span class="p">()]</span> 
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Datashape after processing: </span><span class="si">{</span><span class="n">df</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">df</span></div>
+
+
+
+<div class="viewcode-block" id="featureEngKmeans"><a class="viewcode-back" href="../modules.html#utils.featureEngKmeans">[docs]</a><span class="k">def</span> <span class="nf">featureEngKmeans</span><span class="p">(</span><span class="n">train</span><span class="p">,</span> <span class="n">test</span><span class="p">,</span> <span class="n">n_clusters</span><span class="p">,</span><span class="n">step_size</span><span class="p">,</span> <span class="n">km</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">gmm</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">random_state</span> <span class="o">=</span> <span class="mi">42</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    train : DataFrame</span>
+<span class="sd">    test : DataFrame</span>
+<span class="sd">    n_clusters : int; Number of clusters</span>
+<span class="sd">    step_size : int; No of cat_cols</span>
+<span class="sd">    km : boolean; Should features be generated through KMeans</span>
+<span class="sd">         Defaul.</span>
+<span class="sd">    gmm : boolean; Should features be generated through GMM</span>
+<span class="sd">    random_state : int;  The default is 42.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    tr : DataFrame</span>
+<span class="sd">    te : DataFrame</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="k">if</span> <span class="p">(</span><span class="ow">not</span> <span class="n">km</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">gmm</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">train</span><span class="p">,</span><span class="n">test</span>
+    
+    <span class="n">tr</span> <span class="o">=</span> <span class="n">train</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="n">te</span> <span class="o">=</span> <span class="n">test</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="n">label_tr</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">label_te</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="n">tr</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span><span class="n">step_size</span><span class="p">):</span>
+      <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Current index: &quot;</span><span class="p">,</span> <span class="n">i</span><span class="p">)</span>
+      <span class="k">if</span> <span class="n">km</span><span class="p">:</span>
+        <span class="n">km</span> <span class="o">=</span> <span class="n">KMeans</span><span class="p">(</span><span class="n">n_clusters</span> <span class="o">=</span> <span class="n">n_clusters</span><span class="p">,</span><span class="n">random_state</span> <span class="o">=</span> <span class="n">random_state</span><span class="p">)</span>
+        <span class="n">_</span><span class="o">=</span> <span class="n">km</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">tr</span><span class="o">.</span><span class="n">iloc</span><span class="p">[:,</span> <span class="n">i</span><span class="p">:</span><span class="n">i</span><span class="o">+</span><span class="n">step_size</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float</span><span class="p">))</span>
+        <span class="n">label_tr</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">km</span><span class="o">.</span><span class="n">labels_</span><span class="p">)</span>
+        <span class="n">label_te</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">km</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">te</span><span class="o">.</span><span class="n">iloc</span><span class="p">[:,</span><span class="n">i</span><span class="p">:</span><span class="n">i</span><span class="o">+</span><span class="n">step_size</span><span class="p">]))</span>
+
+      <span class="k">if</span> <span class="n">gmm</span><span class="p">:</span>
+        <span class="n">gmm</span> <span class="o">=</span> <span class="n">GaussianMixture</span><span class="p">(</span><span class="n">n_components</span> <span class="o">=</span> <span class="n">n_clusters</span><span class="p">,</span> <span class="n">random_state</span> <span class="o">=</span> <span class="n">random_state</span><span class="p">)</span>
+        <span class="n">gmm</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">tr</span><span class="p">)</span> 
+        <span class="n">label_tr</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">gmm</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">tr</span><span class="p">))</span>
+        <span class="n">label_te</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">gmm</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">te</span><span class="p">))</span>
+
+      <span class="n">_</span><span class="o">=</span><span class="n">gc</span><span class="o">.</span><span class="n">collect</span><span class="p">()</span>
+
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">label_tr</span><span class="p">)):</span>
+      <span class="n">tr</span><span class="p">[</span><span class="s1">&#39;clu&#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)]</span> <span class="o">=</span> <span class="n">label_tr</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+      <span class="n">te</span><span class="p">[</span><span class="s1">&#39;clu&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)]</span> <span class="o">=</span> <span class="n">label_te</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> 
+
+    <span class="k">return</span> <span class="n">tr</span><span class="p">,</span><span class="n">te</span></div>
+
+
+
+<span class="c1">################### That&#39;s all folks #######################</span>
+
+
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Prof. Ashok Harnal.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
